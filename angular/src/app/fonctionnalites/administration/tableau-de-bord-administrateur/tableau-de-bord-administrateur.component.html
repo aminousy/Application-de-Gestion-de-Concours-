@@ -1,0 +1,100 @@
+<h1 class="h3 fw-bold mb-4">Tableau de bord</h1>
+
+@if (chargement()) {
+  <app-chargement message="Chargement des statistiques..." />
+} @else if (erreur()) {
+  <app-message-erreur [message]="erreur()!" [reessayable]="true" (reessayer)="charger()" />
+} @else {
+  @if (stats(); as s) {
+  <div class="row g-3 mb-5">
+    <div class="col-6 col-lg">
+      <app-carte-statistique
+        [valeur]="s.candidats"
+        libelle="Candidats"
+        icone="bi-people"
+        couleur="text-primary"
+      />
+    </div>
+    <div class="col-6 col-lg">
+      <app-carte-statistique
+        [valeur]="s.concours"
+        libelle="Concours"
+        icone="bi-trophy"
+        couleur="text-secondary"
+      />
+    </div>
+    <div class="col-6 col-lg">
+      <app-carte-statistique
+        [valeur]="s.concoursOuverts"
+        libelle="Concours ouverts"
+        icone="bi-megaphone"
+        couleur="text-warning"
+      />
+    </div>
+    <div class="col-6 col-lg">
+      <app-carte-statistique
+        [valeur]="s.candidatures"
+        libelle="Candidatures"
+        icone="bi-folder"
+        couleur="text-info"
+      />
+    </div>
+    <div class="col-12 col-lg">
+      <app-carte-statistique
+        [valeur]="s.resultats"
+        libelle="Resultats calcules"
+        icone="bi-bar-chart"
+        couleur="text-success"
+      />
+    </div>
+  </div>
+
+  <h2 class="h5 fw-bold mb-3">Gestion</h2>
+  <div class="row g-3">
+    <div class="col-sm-6 col-lg-3">
+      <a
+        class="card text-decoration-none text-body h-100 shadow-sm"
+        routerLink="/administration/concours"
+      >
+        <div class="card-body text-center">
+          <i class="bi bi-trophy fs-2 text-primary d-block mb-2" aria-hidden="true"></i>
+          Gerer les concours
+        </div>
+      </a>
+    </div>
+    <div class="col-sm-6 col-lg-3">
+      <a
+        class="card text-decoration-none text-body h-100 shadow-sm"
+        routerLink="/administration/candidatures"
+      >
+        <div class="card-body text-center">
+          <i class="bi bi-folder fs-2 text-primary d-block mb-2" aria-hidden="true"></i>
+          Gerer les candidatures
+        </div>
+      </a>
+    </div>
+    <div class="col-sm-6 col-lg-3">
+      <a
+        class="card text-decoration-none text-body h-100 shadow-sm"
+        routerLink="/administration/notes"
+      >
+        <div class="card-body text-center">
+          <i class="bi bi-pencil-square fs-2 text-primary d-block mb-2" aria-hidden="true"></i>
+          Saisir les notes
+        </div>
+      </a>
+    </div>
+    <div class="col-sm-6 col-lg-3">
+      <a
+        class="card text-decoration-none text-body h-100 shadow-sm"
+        routerLink="/administration/resultats"
+      >
+        <div class="card-body text-center">
+          <i class="bi bi-bar-chart fs-2 text-primary d-block mb-2" aria-hidden="true"></i>
+          Calculer / publier
+        </div>
+      </a>
+    </div>
+  </div>
+  }
+}

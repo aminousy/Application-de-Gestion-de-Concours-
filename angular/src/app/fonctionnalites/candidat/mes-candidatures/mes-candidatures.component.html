@@ -1,0 +1,78 @@
+<section class="container py-5">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="h3 fw-bold mb-0">Mes candidatures</h1>
+    <a class="btn btn-primary btn-sm" routerLink="/candidat/candidature/nouvelle">
+      <i class="bi bi-plus-lg me-1" aria-hidden="true"></i>Nouvelle candidature
+    </a>
+  </div>
+
+  @if (notification()) {
+    <div class="alert alert-info" role="alert">{{ notification() }}</div>
+  }
+
+  @if (chargement()) {
+    <app-chargement message="Chargement de vos candidatures..." />
+  } @else if (erreur()) {
+    <app-message-erreur [message]="erreur()!" [reessayable]="true" (reessayer)="charger()" />
+  } @else if (candidatures().length === 0) {
+    <div class="text-center text-muted py-5">
+      <i class="bi bi-folder2-open fs-1 d-block mb-2" aria-hidden="true"></i>
+      <p>Vous n'avez encore depose aucune candidature.</p>
+      <a class="btn btn-outline-primary" routerLink="/concours">Voir les concours ouverts</a>
+    </div>
+  } @else {
+    <div class="table-responsive">
+      <table class="table align-middle">
+        <thead>
+          <tr>
+            <th scope="col">Concours</th>
+            <th scope="col">Date de depot</th>
+            <th scope="col">Statut</th>
+            <th scope="col" class="text-end">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (candidature of candidatures(); track candidature.id) {
+            <tr>
+              <td class="fw-semibold">{{ candidature.titreConcours }}</td>
+              <td>{{ candidature.dateDepot | date: 'dd/MM/yyyy HH:mm' }}</td>
+              <td><app-badge-statut [statut]="candidature.statut" /></td>
+              <td class="text-end">
+                <a
+                  class="btn btn-sm btn-outline-secondary me-1"
+                  [routerLink]="['/candidat/candidature', candidature.id]"
+                >
+                  Detail
+                </a>
+                @if (peutRetirer(candidature)) {
+                  <button
+                    type="button"
+                    class="btn btn-sm btn-outline-danger"
+                    (click)="demanderRetrait(candidature)"
+                  >
+                    Retirer
+                  </button>
+                }
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</section>
+
+<app-boite-confirmation
+  [ouverte]="candidatureARetirer() !== null"
+  titre="Retirer la candidature"
+  [message]="
+    'Voulez-vous vraiment retirer votre candidature au concours ' +
+    (candidatureARetirer()?.titreConcours ?? '') +
+    ' ? Cette action est definitive.'
+  "
+  libelleConfirmation="Retirer"
+  variante="danger"
+  [enCours]="retraitEnCours()"
+  (confirme)="confirmerRetrait()"
+  (annule)="annulerRetrait()"
+/>

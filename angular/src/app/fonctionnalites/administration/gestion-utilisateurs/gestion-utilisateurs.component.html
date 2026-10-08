@@ -1,0 +1,266 @@
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h1 class="h3 fw-bold mb-0">Utilisateurs</h1>
+  <button type="button" class="btn btn-primary btn-sm" (click)="ouvrirCreation()">
+    <i class="bi bi-plus-lg me-1" aria-hidden="true"></i>Nouvel utilisateur
+  </button>
+</div>
+
+@if (notification()) {
+  <div class="alert alert-info" role="alert">{{ notification() }}</div>
+}
+
+@if (chargement()) {
+  <app-chargement message="Chargement des utilisateurs..." />
+} @else if (erreur()) {
+  <app-message-erreur [message]="erreur()!" [reessayable]="true" (reessayer)="charger()" />
+} @else {
+  <div class="row g-2 mb-3">
+    <div class="col-sm-8">
+      <input
+        type="search"
+        class="form-control"
+        placeholder="Rechercher (nom, prenom, email)"
+        aria-label="Rechercher un utilisateur"
+        [value]="recherche()"
+        (input)="majRecherche($any($event.target).value)"
+      />
+    </div>
+    <div class="col-sm-4">
+      <select
+        class="form-select"
+        aria-label="Filtrer par role"
+        [value]="filtreRole()"
+        (change)="majFiltreRole($any($event.target).value)"
+      >
+        <option value="">Tous les roles</option>
+        @for (r of roles; track r) {
+          <option [value]="r">{{ libelleRole[r] }}</option>
+        }
+      </select>
+    </div>
+  </div>
+
+  @if (utilisateursAffiches().length === 0) {
+    <p class="text-muted text-center py-4">Aucun utilisateur ne correspond.</p>
+  } @else {
+    <div class="table-responsive">
+      <table class="table align-middle">
+        <thead>
+          <tr>
+            <th scope="col">Nom</th>
+            <th scope="col">Email</th>
+            <th scope="col">Telephone</th>
+            <th scope="col">Role</th>
+            <th scope="col">Statut</th>
+            <th scope="col">Cree le</th>
+            <th scope="col" class="text-end">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (u of utilisateursAffiches(); track u.id) {
+            <tr>
+              <td class="fw-semibold">{{ u.nom }} {{ u.prenom }}</td>
+              <td>{{ u.email }}</td>
+              <td>{{ u.telephone || '-' }}</td>
+              <td>
+                <span
+                  class="badge"
+                  [class.text-bg-primary]="u.role === 'ROLE_ADMIN'"
+                  [class.text-bg-secondary]="u.role === 'ROLE_CANDIDAT'"
+                >
+                  {{ libelleRole[u.role] }}
+                </span>
+              </td>
+              <td>
+                <span
+                  class="badge"
+                  [class.text-bg-success]="u.actif"
+                  [class.text-bg-secondary]="!u.actif"
+                >
+                  {{ u.actif ? 'Actif' : 'Inactif' }}
+                </span>
+              </td>
+              <td class="small text-muted">{{ u.dateCreation | date: 'dd/MM/yyyy' }}</td>
+              <td class="text-end">
+                <button
+                  type="button"
+                  class="btn btn-sm btn-outline-secondary me-1"
+                  (click)="ouvrirEdition(u)"
+                >
+                  Modifier
+                </button>
+                <button
+                  type="button"
+                  class="btn btn-sm btn-outline-danger"
+                  [disabled]="estMoi(u)"
+                  (click)="demanderSuppression(u)"
+                >
+                  Supprimer
+                </button>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+}
+
+<app-modale [ouverte]="creationOuverte()" titre="Nouvel utilisateur" (fermer)="fermerCreation()">
+  @if (erreurCreation()) {
+    <div class="alert alert-danger" role="alert">{{ erreurCreation() }}</div>
+  }
+  <form [formGroup]="formCreation" (ngSubmit)="soumettreCreation()" novalidate>
+    <div class="row g-3">
+      <div class="col-md-6">
+        <label class="form-label" for="c-nom">Nom</label>
+        <input
+          id="c-nom"
+          class="form-control"
+          formControlName="nom"
+          [class.is-invalid]="estInvalideCreation('nom')"
+        />
+      </div>
+      <div class="col-md-6">
+        <label class="form-label" for="c-prenom">Prenom</label>
+        <input
+          id="c-prenom"
+          class="form-control"
+          formControlName="prenom"
+          [class.is-invalid]="estInvalideCreation('prenom')"
+        />
+      </div>
+      <div class="col-12">
+        <label class="form-label" for="c-email">Adresse email</label>
+        <input
+          id="c-email"
+          type="email"
+          class="form-control"
+          formControlName="adresseEmail"
+          [class.is-invalid]="estInvalideCreation('adresseEmail')"
+        />
+      </div>
+      <div class="col-md-6">
+        <label class="form-label" for="c-tel">Telephone (facultatif)</label>
+        <input id="c-tel" type="tel" class="form-control" formControlName="numeroTelephone" />
+      </div>
+      <div class="col-md-6">
+        <label class="form-label" for="c-role">Role</label>
+        <select id="c-role" class="form-select" formControlName="role">
+          @for (r of roles; track r) {
+            <option [value]="r">{{ libelleRole[r] }}</option>
+          }
+        </select>
+      </div>
+      <div class="col-12">
+        <label class="form-label" for="c-mdp">Mot de passe</label>
+        <input
+          id="c-mdp"
+          type="password"
+          class="form-control"
+          formControlName="motDePasse"
+          autocomplete="new-password"
+          [class.is-invalid]="estInvalideCreation('motDePasse')"
+        />
+        <div class="form-text">Au moins 8 caracteres.</div>
+      </div>
+    </div>
+    <div class="d-flex justify-content-end gap-2 mt-4">
+      <button type="button" class="btn btn-outline-secondary" (click)="fermerCreation()">
+        Annuler
+      </button>
+      <button type="submit" class="btn btn-primary" [disabled]="creationEnCours()">
+        @if (creationEnCours()) {
+          <span class="spinner-border spinner-border-sm me-1" aria-hidden="true"></span>
+        }
+        Creer
+      </button>
+    </div>
+  </form>
+</app-modale>
+
+<app-modale
+  [ouverte]="utilisateurEnEdition() !== null"
+  titre="Modifier l'utilisateur"
+  (fermer)="fermerEdition()"
+>
+  @if (utilisateurEnEdition(); as u) {
+    @if (erreurEdition()) {
+      <div class="alert alert-danger" role="alert">{{ erreurEdition() }}</div>
+    }
+    <p class="small text-muted">{{ u.email }}</p>
+    <form [formGroup]="formEdition" (ngSubmit)="enregistrerEdition()" novalidate>
+      <div class="row g-3">
+        <div class="col-md-6">
+          <label class="form-label" for="e-nom">Nom</label>
+          <input
+            id="e-nom"
+            class="form-control"
+            formControlName="nom"
+            [class.is-invalid]="estInvalideEdition('nom')"
+          />
+        </div>
+        <div class="col-md-6">
+          <label class="form-label" for="e-prenom">Prenom</label>
+          <input
+            id="e-prenom"
+            class="form-control"
+            formControlName="prenom"
+            [class.is-invalid]="estInvalideEdition('prenom')"
+          />
+        </div>
+        <div class="col-12">
+          <label class="form-label" for="e-tel">Telephone (facultatif)</label>
+          <input id="e-tel" type="tel" class="form-control" formControlName="numeroTelephone" />
+        </div>
+        <div class="col-md-6">
+          <label class="form-label" for="e-role">Role</label>
+          <select id="e-role" class="form-select" formControlName="role">
+            @for (r of roles; track r) {
+              <option [value]="r">{{ libelleRole[r] }}</option>
+            }
+          </select>
+        </div>
+        <div class="col-md-6 d-flex align-items-end">
+          <div class="form-check form-switch">
+            <input id="e-actif" class="form-check-input" type="checkbox" formControlName="actif" />
+            <label class="form-check-label" for="e-actif">Compte actif</label>
+          </div>
+        </div>
+      </div>
+      @if (estMoi(u)) {
+        <p class="form-text mt-2">
+          Vous ne pouvez pas modifier votre propre role ni desactiver votre compte.
+        </p>
+      }
+      <div class="d-flex justify-content-end gap-2 mt-4">
+        <button type="button" class="btn btn-outline-secondary" (click)="fermerEdition()">
+          Annuler
+        </button>
+        <button type="submit" class="btn btn-primary" [disabled]="editionEnCours()">
+          @if (editionEnCours()) {
+            <span class="spinner-border spinner-border-sm me-1" aria-hidden="true"></span>
+          }
+          Enregistrer
+        </button>
+      </div>
+    </form>
+  }
+</app-modale>
+
+<app-boite-confirmation
+  [ouverte]="utilisateurASupprimer() !== null"
+  titre="Supprimer l'utilisateur"
+  [message]="
+    'Supprimer definitivement ' +
+    (utilisateurASupprimer()?.nom ?? '') +
+    ' ' +
+    (utilisateurASupprimer()?.prenom ?? '') +
+    ' ?'
+  "
+  libelleConfirmation="Supprimer"
+  variante="danger"
+  [enCours]="suppressionEnCours()"
+  (confirme)="confirmerSuppression()"
+  (annule)="annulerSuppression()"
+/>

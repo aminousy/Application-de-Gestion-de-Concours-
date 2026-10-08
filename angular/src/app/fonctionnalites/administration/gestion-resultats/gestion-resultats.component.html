@@ -1,0 +1,180 @@
+<h1 class="h3 fw-bold mb-4">Resultats</h1>
+
+@if (notification()) {
+  <div class="alert alert-info" role="alert">{{ notification() }}</div>
+}
+@if (erreurAction()) {
+  <div class="alert alert-danger" role="alert">{{ erreurAction() }}</div>
+}
+
+@if (chargementConcours()) {
+  <app-chargement message="Chargement des concours..." />
+} @else if (erreurConcours()) {
+  <app-message-erreur [message]="erreurConcours()!" />
+} @else {
+  <div class="mb-3" style="max-width: 32rem">
+    <label class="form-label" for="choixConcours">Concours</label>
+    <select
+      id="choixConcours"
+      class="form-select"
+      [value]="concoursSelectionne()?.id ?? ''"
+      (change)="selectionnerConcoursParId($any($event.target).value)"
+    >
+      <option value="" disabled>-- Choisir un concours --</option>
+      @for (c of concoursListe(); track c.id) {
+        <option [value]="c.id">{{ c.titre }}</option>
+      }
+    </select>
+  </div>
+
+  @if (concoursSelectionne(); as concours) {
+    @if (publie()) {
+      <div class="alert alert-success" role="alert">
+        <i class="bi bi-check-circle me-1" aria-hidden="true"></i>
+        Resultats publies
+        @if (concours.datePublicationResultats) {
+          le {{ concours.datePublicationResultats | date: 'longDate' }}
+        }.
+        Les candidats y ont acces.
+      </div>
+    }
+
+    <div class="d-flex gap-2 mb-3 flex-wrap">
+      <button
+        type="button"
+        class="btn btn-outline-primary"
+        [disabled]="calculEnCours()"
+        (click)="calculer()"
+      >
+        @if (calculEnCours()) {
+          <span class="spinner-border spinner-border-sm me-1" aria-hidden="true"></span>
+        }
+        {{ resultats().length === 0 ? 'Calculer les resultats' : 'Recalculer' }}
+      </button>
+
+      <button
+        type="button"
+        class="btn btn-primary"
+        [disabled]="publie() || resultats().length === 0"
+        (click)="demanderPublication()"
+      >
+        Publier les resultats
+      </button>
+    </div>
+
+    <p class="text-muted small">
+      Nombre de places : {{ concours.nombrePlaces }} - un candidat est admis si son rang est
+      inferieur ou egal a ce nombre.
+    </p>
+
+    @if (chargementResultats()) {
+      <app-chargement message="Chargement du classement..." />
+    } @else if (erreurResultats()) {
+      <app-message-erreur
+        [message]="erreurResultats()!"
+        [reessayable]="true"
+        (reessayer)="chargerResultats(concours.id)"
+      />
+    } @else if (resultats().length === 0) {
+      <p class="text-muted text-center py-4">
+        Aucun resultat. Lancez le calcul (toutes les notes doivent etre saisies).
+      </p>
+    } @else {
+      <div class="table-responsive">
+        <table class="table align-middle">
+          <thead>
+            <tr>
+              <th scope="col" class="text-center">Rang</th>
+              <th scope="col">Candidat</th>
+              <th scope="col" class="text-center">Moyenne</th>
+              <th scope="col">Admission</th>
+              <th scope="col">Decision</th>
+              <th scope="col" class="text-end">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (r of resultats(); track r.id) {
+              <tr>
+                <td class="text-center fw-bold">{{ r.rang !== null ? r.rang : '-' }}</td>
+                <td>{{ r.nomCandidat }} {{ r.prenomCandidat }}</td>
+                <td class="text-center fw-semibold">{{ r.moyenne | number: '1.2-2' }} / 20</td>
+                <td>
+                  @if (r.admis) {
+                    <span class="badge text-bg-success">Admis</span>
+                  } @else {
+                    <span class="badge text-bg-danger">Non admis</span>
+                  }
+                </td>
+                <td class="small">{{ r.decision || '-' }}</td>
+                <td class="text-end">
+                  <button
+                    type="button"
+                    class="btn btn-sm btn-outline-secondary"
+                    (click)="ouvrirDeliberation(r)"
+                  >
+                    Deliberer
+                  </button>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  } @else {
+    <p class="text-muted">Selectionnez un concours.</p>
+  }
+}
+
+<app-modale
+  [ouverte]="resultatEnDeliberation() !== null"
+  titre="Deliberation"
+  (fermer)="fermerDeliberation()"
+>
+  @if (resultatEnDeliberation(); as r) {
+    @if (erreurDeliberation()) {
+      <div class="alert alert-danger" role="alert">{{ erreurDeliberation() }}</div>
+    }
+    <p class="small text-muted">
+      {{ r.nomCandidat }} {{ r.prenomCandidat }} - moyenne {{ r.moyenne | number: '1.2-2' }} / 20
+    </p>
+    <form [formGroup]="formDeliberation" (ngSubmit)="enregistrerDeliberation()" novalidate>
+      <div class="form-check form-switch mb-3">
+        <input id="d-admis" class="form-check-input" type="checkbox" formControlName="admis" />
+        <label class="form-check-label" for="d-admis">Candidat admis</label>
+      </div>
+      <div class="mb-3">
+        <label class="form-label" for="d-decision">Commentaire du jury (facultatif)</label>
+        <textarea
+          id="d-decision"
+          class="form-control"
+          rows="3"
+          maxlength="500"
+          formControlName="decision"
+        ></textarea>
+      </div>
+      <div class="d-flex justify-content-end gap-2">
+        <button type="button" class="btn btn-outline-secondary" (click)="fermerDeliberation()">
+          Annuler
+        </button>
+        <button type="submit" class="btn btn-primary" [disabled]="deliberationEnCours()">
+          @if (deliberationEnCours()) {
+            <span class="spinner-border spinner-border-sm me-1" aria-hidden="true"></span>
+          }
+          Enregistrer
+        </button>
+      </div>
+    </form>
+  }
+</app-modale>
+
+<app-boite-confirmation
+  [ouverte]="publicationDemandee()"
+  titre="Publier les resultats"
+  message="La publication est definitive : les candidats verront immediatement leurs resultats et les notes seront verrouillees. Confirmer ?"
+  libelleConfirmation="Publier"
+  variante="primary"
+  [enCours]="publicationEnCours()"
+  (confirme)="confirmerPublication()"
+  (annule)="annulerPublication()"
+/>

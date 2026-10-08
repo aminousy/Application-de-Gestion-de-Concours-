@@ -1,0 +1,151 @@
+<section class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-md-10 col-lg-7">
+      <div class="card shadow-sm">
+        <div class="card-body p-4">
+          <h1 class="h4 fw-bold text-center mb-4">Creer un compte candidat</h1>
+
+          @if (erreur()) {
+            <div class="alert alert-danger" role="alert">
+              <p class="mb-0">{{ erreur() }}</p>
+              @if (erreursDetail().length > 0) {
+                <ul class="mb-0 mt-2 small">
+                  @for (detail of erreursDetail(); track detail.champ) {
+                    <li>{{ detail.message }}</li>
+                  }
+                </ul>
+              }
+            </div>
+          }
+
+          <form [formGroup]="formulaire" (ngSubmit)="inscription()" novalidate>
+            <div class="row g-3">
+              <div class="col-md-6">
+                <label class="form-label" for="nom">Nom</label>
+                <input
+                  id="nom"
+                  type="text"
+                  class="form-control"
+                  formControlName="nom"
+                  autocomplete="family-name"
+                  [class.is-invalid]="estInvalide('nom')"
+                />
+                @if (estInvalide('nom')) {
+                  <div class="invalid-feedback">Le nom est obligatoire.</div>
+                }
+              </div>
+
+              <div class="col-md-6">
+                <label class="form-label" for="prenom">Prenom</label>
+                <input
+                  id="prenom"
+                  type="text"
+                  class="form-control"
+                  formControlName="prenom"
+                  autocomplete="given-name"
+                  [class.is-invalid]="estInvalide('prenom')"
+                />
+                @if (estInvalide('prenom')) {
+                  <div class="invalid-feedback">Le prenom est obligatoire.</div>
+                }
+              </div>
+
+              <div class="col-12">
+                <label class="form-label" for="adresseEmail">Adresse email</label>
+                <input
+                  id="adresseEmail"
+                  type="email"
+                  class="form-control"
+                  formControlName="adresseEmail"
+                  autocomplete="email"
+                  [class.is-invalid]="estInvalide('adresseEmail')"
+                />
+                @if (estInvalide('adresseEmail')) {
+                  <div class="invalid-feedback">
+                    @if (formulaire.controls.adresseEmail.hasError('required')) {
+                      L'adresse email est obligatoire.
+                    } @else {
+                      Le format de l'adresse email est invalide.
+                    }
+                  </div>
+                }
+              </div>
+
+              <div class="col-12">
+                <label class="form-label" for="numeroTelephone">
+                  Numero de telephone <span class="text-muted">(facultatif)</span>
+                </label>
+                <input
+                  id="numeroTelephone"
+                  type="tel"
+                  class="form-control"
+                  formControlName="numeroTelephone"
+                  autocomplete="tel"
+                  [class.is-invalid]="estInvalide('numeroTelephone')"
+                />
+                @if (estInvalide('numeroTelephone')) {
+                  <div class="invalid-feedback">Le numero ne doit pas depasser 30 caracteres.</div>
+                }
+              </div>
+
+              <div class="col-md-6">
+                <label class="form-label" for="motDePasse">Mot de passe</label>
+                <input
+                  id="motDePasse"
+                  type="password"
+                  class="form-control"
+                  formControlName="motDePasse"
+                  autocomplete="new-password"
+                  [class.is-invalid]="estInvalide('motDePasse')"
+                />
+                @if (estInvalide('motDePasse')) {
+                  <div class="invalid-feedback">
+                    @if (formulaire.controls.motDePasse.hasError('required')) {
+                      Le mot de passe est obligatoire.
+                    } @else {
+                      Le mot de passe doit contenir au moins 8 caracteres.
+                    }
+                  </div>
+                }
+                <div class="form-text">Au moins 8 caracteres.</div>
+              </div>
+
+              <div class="col-md-6">
+                <label class="form-label" for="confirmationMotDePasse">
+                  Confirmation du mot de passe
+                </label>
+                <input
+                  id="confirmationMotDePasse"
+                  type="password"
+                  class="form-control"
+                  formControlName="confirmationMotDePasse"
+                  autocomplete="new-password"
+                  [class.is-invalid]="estInvalide('confirmationMotDePasse') || erreurCorrespondance"
+                />
+                @if (estInvalide('confirmationMotDePasse')) {
+                  <div class="invalid-feedback">La confirmation est obligatoire.</div>
+                } @else if (erreurCorrespondance) {
+                  <div class="invalid-feedback">Les deux mots de passe ne correspondent pas.</div>
+                }
+              </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary w-100 mt-4" [disabled]="enCours()">
+              @if (enCours()) {
+                <span class="spinner-border spinner-border-sm me-2" aria-hidden="true"></span>
+                Creation du compte...
+              } @else {
+                Creer mon compte
+              }
+            </button>
+          </form>
+
+          <p class="text-center mt-3 mb-0 small">
+            Deja inscrit ?
+            <a routerLink="/connexion">Se connecter</a>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,97 @@
+<section class="container py-5">
+  @if (chargement()) {
+    <app-chargement message="Chargement de la candidature..." />
+  } @else if (introuvable()) {
+    <div class="text-center py-5">
+      <i class="bi bi-folder-x fs-1 text-muted d-block mb-2" aria-hidden="true"></i>
+      <h1 class="h4">Candidature introuvable</h1>
+      <p class="text-muted">Cette candidature n'existe pas ou ne vous appartient pas.</p>
+      <a class="btn btn-primary" routerLink="/candidat/candidatures">Retour a mes candidatures</a>
+    </div>
+  } @else if (erreur()) {
+    <app-message-erreur [message]="erreur()!" [reessayable]="true" (reessayer)="charger()" />
+  } @else {
+    @if (candidature(); as c) {
+    <nav aria-label="Fil d'ariane" class="mb-3">
+      <ol class="breadcrumb small mb-0">
+        <li class="breadcrumb-item">
+          <a routerLink="/candidat/candidatures">Mes candidatures</a>
+        </li>
+        <li class="breadcrumb-item active" aria-current="page">{{ c.titreConcours }}</li>
+      </ol>
+    </nav>
+
+    <div class="d-flex align-items-center gap-2 mb-3 flex-wrap">
+      <h1 class="h3 fw-bold mb-0">{{ c.titreConcours }}</h1>
+      <app-badge-statut [statut]="c.statut" />
+    </div>
+
+    <div class="row g-4">
+      <div class="col-lg-5">
+        <div class="card shadow-sm">
+          <div class="card-body">
+            <h2 class="h6 fw-bold">Ma candidature</h2>
+            <ul class="list-unstyled small mb-0">
+              <li class="mb-2">
+                <span class="text-muted">Depose le</span><br />
+                <strong>
+                  {{ c.dateDepot | date: 'longDate' }} a {{ c.dateDepot | date: 'HH:mm' }}
+                </strong>
+              </li>
+              <li>
+                <span class="text-muted">Lettre de motivation</span><br />
+                @if (c.motivation) {
+                  <span class="text-body">{{ c.motivation }}</span>
+                } @else {
+                  <span class="fst-italic text-muted">Aucune</span>
+                }
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-7">
+        <div class="card shadow-sm">
+          <div class="card-body">
+            <h2 class="h6 fw-bold">Mes notes</h2>
+            @if (chargementNotes()) {
+              <app-chargement message="" />
+            } @else if (notes().length === 0) {
+              <p class="text-muted small mb-0">
+                Aucune note saisie pour le moment. Le resultat officiel sera disponible dans
+                <a routerLink="/candidat/resultats">Mes resultats</a> apres publication.
+              </p>
+            } @else {
+              <div class="table-responsive">
+                <table class="table table-sm align-middle mb-0">
+                  <thead>
+                    <tr>
+                      <th scope="col">Epreuve</th>
+                      <th scope="col" class="text-center">Coefficient</th>
+                      <th scope="col" class="text-center">Note / 20</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    @for (note of notes(); track note.id) {
+                      <tr>
+                        <td>{{ note.intituleEpreuve }}</td>
+                        <td class="text-center">{{ note.coefficient }}</td>
+                        <td class="text-center fw-semibold">{{ note.valeur }}</td>
+                      </tr>
+                    }
+                  </tbody>
+                </table>
+              </div>
+              <p class="form-text mt-2 mb-0">
+                Notes provisoires. Le resultat officiel (moyenne, rang, decision) est publie
+                separement.
+              </p>
+            }
+          </div>
+        </div>
+      </div>
+    </div>
+    }
+  }
+</section>

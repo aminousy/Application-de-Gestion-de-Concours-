@@ -1,0 +1,36 @@
+.hero {
+  background: linear-gradient(135deg, var(--sx-primaire), var(--sx-primaire-fonce));
+  color: #ffffff;
+}
+
+.hero-intro {
+  max-width: 40rem;
+}
+
+.carte-avantage {
+  height: 100%;
+  border: none;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+}
+
+.icone-avantage {
+  font-size: 2rem;
+  color: var(--sx-primaire);
+}
+
+.bande-cta {
+  background-color: var(--sx-clair);
+}
+
+.pastille-etape {
+  width: 2.75rem;
+  height: 2.75rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background-color: var(--sx-primaire);
+  color: #ffffff;
+  font-weight: 700;
+  font-size: 1.1rem;
+}

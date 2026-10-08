@@ -1,0 +1,75 @@
+<section class="hero py-5">
+  <div class="container py-4 text-center">
+    <h1 class="display-4 fw-bold mb-2">SunuXam</h1>
+    <p class="fs-4 mb-3">Vos concours et examens, de l'inscription aux resultats.</p>
+    <p class="lead mx-auto mb-4 hero-intro">
+      SunuXam digitalise la gestion des concours de recrutement et des examens :
+      publication des concours, depot des candidatures, saisie des notes,
+      calcul et publication des resultats.
+    </p>
+
+    <div class="d-flex flex-column flex-sm-row gap-2 justify-content-center">
+      @if (estAuthentifie()) {
+        @if (estAdministrateur()) {
+          <a class="btn btn-light btn-lg" routerLink="/administration/tableau-de-bord">
+            Acceder a l'administration
+          </a>
+        } @else {
+          <a class="btn btn-light btn-lg" routerLink="/candidat/tableau-de-bord">
+            Acceder a mon espace
+          </a>
+        }
+        <a class="btn btn-outline-light btn-lg" routerLink="/concours">Voir les concours</a>
+      } @else {
+        <a class="btn btn-light btn-lg" routerLink="/inscription">Creer un compte</a>
+        <a class="btn btn-outline-light btn-lg" routerLink="/concours">Voir les concours</a>
+      }
+    </div>
+  </div>
+</section>
+
+<section class="container py-5">
+  <h2 class="h3 text-center fw-bold mb-4">Pourquoi SunuXam ?</h2>
+  <div class="row g-4">
+    @for (avantage of avantages; track avantage.titre) {
+      <div class="col-sm-6 col-lg-3">
+        <div class="card carte-avantage text-center p-3">
+          <div class="mb-2">
+            <i class="bi {{ avantage.icone }} icone-avantage" aria-hidden="true"></i>
+          </div>
+          <h3 class="h6 fw-bold">{{ avantage.titre }}</h3>
+          <p class="small text-muted mb-0">{{ avantage.texte }}</p>
+        </div>
+      </div>
+    }
+  </div>
+</section>
+
+<section class="bande-cta py-5">
+  <div class="container">
+    <h2 class="h3 text-center fw-bold mb-4">Comment ca marche</h2>
+    <div class="row g-4">
+      @for (etape of etapes; track etape.numero) {
+        <div class="col-md-6 col-lg-3">
+          <div class="d-flex flex-column align-items-center text-center">
+            <span class="pastille-etape mb-3">{{ etape.numero }}</span>
+            <h3 class="h6 fw-bold">{{ etape.titre }}</h3>
+            <p class="small text-muted mb-0">{{ etape.texte }}</p>
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+</section>
+
+<section class="container py-5 text-center">
+  <h2 class="h4 fw-bold mb-3">Pret a participer a un concours ?</h2>
+  @if (estAuthentifie()) {
+    <a class="btn btn-primary btn-lg" routerLink="/concours">Parcourir les concours ouverts</a>
+  } @else {
+    <div class="d-flex flex-column flex-sm-row gap-2 justify-content-center">
+      <a class="btn btn-primary btn-lg" routerLink="/inscription">Je m'inscris</a>
+      <a class="btn btn-outline-primary btn-lg" routerLink="/connexion">J'ai deja un compte</a>
+    </div>
+  }
+</section>

@@ -1,0 +1,261 @@
+<h1 class="h3 fw-bold mb-4">Epreuves</h1>
+
+@if (notification()) {
+  <div class="alert alert-info" role="alert">{{ notification() }}</div>
+}
+
+@if (chargementConcours()) {
+  <app-chargement message="Chargement des concours..." />
+} @else if (erreurConcours()) {
+  <app-message-erreur [message]="erreurConcours()!" />
+} @else {
+  <div class="mb-4" style="max-width: 32rem">
+    <label class="form-label" for="choixConcours">Concours</label>
+    <select
+      id="choixConcours"
+      class="form-select"
+      [value]="concoursSelectionne()?.id ?? ''"
+      (change)="selectionnerConcoursParId($any($event.target).value)"
+    >
+      <option value="" disabled>-- Choisir un concours --</option>
+      @for (c of concoursListe(); track c.id) {
+        <option [value]="c.id">{{ c.titre }}</option>
+      }
+    </select>
+  </div>
+
+  @if (concoursSelectionne(); as concours) {
+    @if (verrouille()) {
+      <div class="alert alert-warning" role="alert">
+        Les resultats de ce concours sont publies : les epreuves ne sont plus modifiables.
+      </div>
+    }
+
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <p class="text-muted mb-0">
+        {{ epreuves().length }} epreuve(s) - total des coefficients : {{ totalCoefficients() }}
+      </p>
+      <button
+        type="button"
+        class="btn btn-primary btn-sm"
+        [disabled]="verrouille()"
+        (click)="ouvrirCreation()"
+      >
+        <i class="bi bi-plus-lg me-1" aria-hidden="true"></i>Ajouter une epreuve
+      </button>
+    </div>
+
+    @if (chargementEpreuves()) {
+      <app-chargement message="Chargement des epreuves..." />
+    } @else if (erreurEpreuves()) {
+      <app-message-erreur
+        [message]="erreurEpreuves()!"
+        [reessayable]="true"
+        (reessayer)="chargerEpreuves(concours.id)"
+      />
+    } @else if (epreuves().length === 0) {
+      <p class="text-muted text-center py-4">Aucune epreuve pour ce concours.</p>
+    } @else {
+      <div class="table-responsive">
+        <table class="table align-middle">
+          <thead>
+            <tr>
+              <th scope="col">Intitule</th>
+              <th scope="col" class="text-center">Coefficient</th>
+              <th scope="col" class="text-center">Duree</th>
+              <th scope="col" class="text-end">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (e of epreuves(); track e.id) {
+              <tr>
+                <td>
+                  <span class="fw-semibold">{{ e.intitule }}</span>
+                  @if (e.description) {
+                    <span class="d-block small text-muted">{{ e.description }}</span>
+                  }
+                </td>
+                <td class="text-center">{{ e.coefficient }}</td>
+                <td class="text-center">{{ e.dureeMinutes }} min</td>
+                <td class="text-end">
+                  <button
+                    type="button"
+                    class="btn btn-sm btn-outline-secondary me-1"
+                    [disabled]="verrouille()"
+                    (click)="ouvrirEdition(e)"
+                  >
+                    Modifier
+                  </button>
+                  <button
+                    type="button"
+                    class="btn btn-sm btn-outline-danger"
+                    [disabled]="verrouille()"
+                    (click)="demanderSuppression(e)"
+                  >
+                    Supprimer
+                  </button>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  } @else {
+    <p class="text-muted">Selectionnez un concours pour gerer ses epreuves.</p>
+  }
+}
+
+<app-modale [ouverte]="creationOuverte()" titre="Ajouter une epreuve" (fermer)="fermerCreation()">
+  @if (erreurCreation()) {
+    <div class="alert alert-danger" role="alert">{{ erreurCreation() }}</div>
+  }
+  <form [formGroup]="formCreation" (ngSubmit)="soumettreCreation()" novalidate>
+    <div class="row g-3">
+      <div class="col-12">
+        <label class="form-label" for="c-intitule">Intitule</label>
+        <input
+          id="c-intitule"
+          class="form-control"
+          formControlName="intitule"
+          [class.is-invalid]="estInvalideCreation('intitule')"
+        />
+        @if (estInvalideCreation('intitule')) {
+          <div class="invalid-feedback">L'intitule est obligatoire.</div>
+        }
+      </div>
+      <div class="col-12">
+        <label class="form-label" for="c-desc">Description (facultatif)</label>
+        <textarea
+          id="c-desc"
+          class="form-control"
+          rows="3"
+          formControlName="description"
+          maxlength="1000"
+        ></textarea>
+      </div>
+      <div class="col-md-6">
+        <label class="form-label" for="c-coef">Coefficient</label>
+        <input
+          id="c-coef"
+          type="number"
+          min="0.01"
+          step="0.5"
+          class="form-control"
+          formControlName="coefficient"
+          [class.is-invalid]="estInvalideCreation('coefficient')"
+        />
+        @if (estInvalideCreation('coefficient')) {
+          <div class="invalid-feedback">Le coefficient doit etre superieur a 0.</div>
+        }
+      </div>
+      <div class="col-md-6">
+        <label class="form-label" for="c-duree">Duree (minutes)</label>
+        <input
+          id="c-duree"
+          type="number"
+          min="1"
+          class="form-control"
+          formControlName="dureeMinutes"
+          [class.is-invalid]="estInvalideCreation('dureeMinutes')"
+        />
+        @if (estInvalideCreation('dureeMinutes')) {
+          <div class="invalid-feedback">La duree doit etre superieure a 0.</div>
+        }
+      </div>
+    </div>
+    <div class="d-flex justify-content-end gap-2 mt-4">
+      <button type="button" class="btn btn-outline-secondary" (click)="fermerCreation()">
+        Annuler
+      </button>
+      <button type="submit" class="btn btn-primary" [disabled]="creationEnCours()">
+        @if (creationEnCours()) {
+          <span class="spinner-border spinner-border-sm me-1" aria-hidden="true"></span>
+        }
+        Ajouter
+      </button>
+    </div>
+  </form>
+</app-modale>
+
+<app-modale
+  [ouverte]="epreuveEnEdition() !== null"
+  titre="Modifier l'epreuve"
+  (fermer)="fermerEdition()"
+>
+  @if (erreurEdition()) {
+    <div class="alert alert-danger" role="alert">{{ erreurEdition() }}</div>
+  }
+  <form [formGroup]="formEdition" (ngSubmit)="enregistrerEdition()" novalidate>
+    <div class="row g-3">
+      <div class="col-12">
+        <label class="form-label" for="e-intitule">Intitule</label>
+        <input
+          id="e-intitule"
+          class="form-control"
+          formControlName="intitule"
+          [class.is-invalid]="estInvalideEdition('intitule')"
+        />
+      </div>
+      <div class="col-12">
+        <label class="form-label" for="e-desc">Description (facultatif)</label>
+        <textarea
+          id="e-desc"
+          class="form-control"
+          rows="3"
+          formControlName="description"
+          maxlength="1000"
+        ></textarea>
+      </div>
+      <div class="col-md-6">
+        <label class="form-label" for="e-coef">Coefficient</label>
+        <input
+          id="e-coef"
+          type="number"
+          min="0.01"
+          step="0.5"
+          class="form-control"
+          formControlName="coefficient"
+          [class.is-invalid]="estInvalideEdition('coefficient')"
+        />
+      </div>
+      <div class="col-md-6">
+        <label class="form-label" for="e-duree">Duree (minutes)</label>
+        <input
+          id="e-duree"
+          type="number"
+          min="1"
+          class="form-control"
+          formControlName="dureeMinutes"
+          [class.is-invalid]="estInvalideEdition('dureeMinutes')"
+        />
+      </div>
+    </div>
+    <div class="d-flex justify-content-end gap-2 mt-4">
+      <button type="button" class="btn btn-outline-secondary" (click)="fermerEdition()">
+        Annuler
+      </button>
+      <button type="submit" class="btn btn-primary" [disabled]="editionEnCours()">
+        @if (editionEnCours()) {
+          <span class="spinner-border spinner-border-sm me-1" aria-hidden="true"></span>
+        }
+        Enregistrer
+      </button>
+    </div>
+  </form>
+</app-modale>
+
+<app-boite-confirmation
+  [ouverte]="epreuveASupprimer() !== null"
+  titre="Supprimer l'epreuve"
+  [message]="
+    'Supprimer l\'epreuve ' +
+    (epreuveASupprimer()?.intitule ?? '') +
+    ' ? (impossible si des notes y sont rattachees)'
+  "
+  libelleConfirmation="Supprimer"
+  variante="danger"
+  [enCours]="suppressionEnCours()"
+  (confirme)="confirmerSuppression()"
+  (annule)="annulerSuppression()"
+/>

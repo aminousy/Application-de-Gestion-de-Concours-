@@ -1,0 +1,16 @@
+/**
+ * Enumerations metier, valeurs identiques a celles serialisees par le backend.
+ */
+
+export enum Role {
+  ADMIN = 'ROLE_ADMIN',
+  CANDIDAT = 'ROLE_CANDIDAT'
+}
+
+export enum StatutCandidature {
+  EN_ATTENTE = 'EN_ATTENTE',
+  DOSSIER_COMPLET = 'DOSSIER_COMPLET',
+  EN_ATTENTE_DE_DELIBERATION = 'EN_ATTENTE_DE_DELIBERATION',
+  ADMIS = 'ADMIS',
+  REFUSE = 'REFUSE'
+}

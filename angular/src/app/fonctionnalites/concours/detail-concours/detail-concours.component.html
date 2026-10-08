@@ -1,0 +1,134 @@
+<section class="container py-5">
+  @if (chargement()) {
+    <app-chargement message="Chargement du concours..." />
+  } @else if (introuvable()) {
+    <div class="text-center py-5">
+      <i class="bi bi-search fs-1 text-muted d-block mb-2" aria-hidden="true"></i>
+      <h1 class="h4">Concours introuvable</h1>
+      <p class="text-muted">Ce concours n'existe pas ou a ete supprime.</p>
+      <a class="btn btn-primary" routerLink="/concours">Retour a la liste</a>
+    </div>
+  } @else if (connexionRequise()) {
+    <div class="alert alert-info text-center" role="alert">
+      <p class="mb-2">Connectez-vous pour consulter ce concours.</p>
+      <a class="btn btn-primary" routerLink="/connexion">Se connecter</a>
+    </div>
+  } @else if (erreur()) {
+    <app-message-erreur [message]="erreur()!" [reessayable]="true" (reessayer)="charger()" />
+  } @else {
+    @if (concours(); as c) {
+    <nav aria-label="Fil d'ariane" class="mb-3">
+      <ol class="breadcrumb small mb-0">
+        <li class="breadcrumb-item"><a routerLink="/concours">Concours</a></li>
+        <li class="breadcrumb-item active" aria-current="page">{{ c.titre }}</li>
+      </ol>
+    </nav>
+
+    <div class="row g-4">
+      <div class="col-lg-8">
+        <div class="d-flex gap-2 mb-2 flex-wrap">
+          @if (depotClos()) {
+            <span class="badge text-bg-secondary">Depot cloture</span>
+          } @else {
+            <span class="badge text-bg-success">Ouvert aux candidatures</span>
+          }
+          @if (c.resultatsPublies) {
+            <span class="badge text-bg-primary">Resultats publies</span>
+          }
+        </div>
+
+        <h1 class="h3 fw-bold">{{ c.titre }}</h1>
+        @if (c.description) {
+          <p class="text-muted">{{ c.description }}</p>
+        }
+
+        <h2 class="h5 mt-4 mb-3">Epreuves</h2>
+        @if (c.epreuves.length === 0) {
+          <p class="text-muted">Les epreuves ne sont pas encore definies.</p>
+        } @else {
+          <div class="table-responsive">
+            <table class="table align-middle">
+              <thead>
+                <tr>
+                  <th scope="col">Intitule</th>
+                  <th scope="col" class="text-center">Coefficient</th>
+                  <th scope="col" class="text-center">Duree</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (epreuve of c.epreuves; track epreuve.id) {
+                  <tr>
+                    <td>
+                      {{ epreuve.intitule }}
+                      @if (epreuve.description) {
+                        <span class="d-block small text-muted">{{ epreuve.description }}</span>
+                      }
+                    </td>
+                    <td class="text-center">{{ epreuve.coefficient }}</td>
+                    <td class="text-center">{{ epreuve.dureeMinutes }} min</td>
+                  </tr>
+                }
+              </tbody>
+              <tfoot>
+                <tr class="fw-semibold">
+                  <td>Total des coefficients</td>
+                  <td class="text-center">{{ totalCoefficients() }}</td>
+                  <td></td>
+                </tr>
+              </tfoot>
+            </table>
+          </div>
+        }
+      </div>
+
+      <div class="col-lg-4">
+        <div class="card shadow-sm">
+          <div class="card-body">
+            <h2 class="h6 fw-bold">Informations</h2>
+            <ul class="list-unstyled small mb-3">
+              <li class="mb-2">
+                <span class="text-muted">Date limite de candidature</span><br />
+                <strong>{{ c.dateLimiteCandidature | date: 'longDate' }}</strong>
+              </li>
+              @if (c.dateDeliberation) {
+                <li class="mb-2">
+                  <span class="text-muted">Date de deliberation</span><br />
+                  <strong>{{ c.dateDeliberation | date: 'longDate' }}</strong>
+                </li>
+              }
+              <li class="mb-2">
+                <span class="text-muted">Nombre de places</span><br />
+                <strong>{{ c.nombrePlaces }}</strong>
+              </li>
+            </ul>
+
+            @if (peutCandidater()) {
+              <a
+                class="btn btn-primary w-100"
+                [routerLink]="['/candidat/candidature/nouvelle']"
+                [queryParams]="{ concoursId: c.id }"
+              >
+                Deposer une candidature
+              </a>
+            } @else if (!estAuthentifie()) {
+              <a
+                class="btn btn-primary w-100"
+                routerLink="/connexion"
+                [queryParams]="{ retour: '/concours/' + c.id }"
+              >
+                Se connecter pour candidater
+              </a>
+            } @else if (estCandidat() && depotClos()) {
+              <p class="small text-muted mb-0">Les candidatures pour ce concours sont closes.</p>
+            } @else {
+              <a class="btn btn-outline-primary w-100" routerLink="/concours">
+                Voir les autres concours
+              </a>
+            }
+          </div>
+        </div>
+      </div>
+    </div>
+    }
+  }
+</section>

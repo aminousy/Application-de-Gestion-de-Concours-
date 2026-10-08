@@ -1,0 +1,68 @@
+/* ============================================================
+   SunuXam - feuille de styles globale
+   Bootstrap 5 est charge via angular.json ; ce fichier ne
+   contient que l'identite visuelle et quelques ajustements.
+   ============================================================ */
+
+:root {
+  --sx-primaire: #0a7d43;
+  --sx-primaire-fonce: #075c31;
+  --sx-accent: #f0a500;
+  --sx-sombre: #1f2937;
+  --sx-clair: #f6f8f7;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  background-color: var(--sx-clair);
+  color: var(--sx-sombre);
+}
+
+a {
+  color: var(--sx-primaire);
+  text-decoration: none;
+}
+
+a:hover {
+  color: var(--sx-primaire-fonce);
+  text-decoration: underline;
+}
+
+.btn-primary {
+  --bs-btn-bg: var(--sx-primaire);
+  --bs-btn-border-color: var(--sx-primaire);
+  --bs-btn-hover-bg: var(--sx-primaire-fonce);
+  --bs-btn-hover-border-color: var(--sx-primaire-fonce);
+  --bs-btn-active-bg: var(--sx-primaire-fonce);
+  --bs-btn-active-border-color: var(--sx-primaire-fonce);
+  --bs-btn-disabled-bg: var(--sx-primaire);
+  --bs-btn-disabled-border-color: var(--sx-primaire);
+}
+
+.btn-outline-primary {
+  --bs-btn-color: var(--sx-primaire);
+  --bs-btn-border-color: var(--sx-primaire);
+  --bs-btn-hover-bg: var(--sx-primaire);
+  --bs-btn-hover-border-color: var(--sx-primaire);
+  --bs-btn-active-bg: var(--sx-primaire-fonce);
+  --bs-btn-active-border-color: var(--sx-primaire-fonce);
+}
+
+.text-primary {
+  color: var(--sx-primaire) !important;
+}
+
+.bg-primary {
+  background-color: var(--sx-primaire) !important;
+}
+
+.lien-marque {
+  font-weight: 700;
+  color: var(--sx-primaire);
+}

@@ -1,0 +1,221 @@
+<h1 class="h3 fw-bold mb-4">Candidatures</h1>
+
+@if (notification()) {
+  <div class="alert alert-info" role="alert">{{ notification() }}</div>
+}
+
+@if (chargementConcours()) {
+  <app-chargement message="Chargement des concours..." />
+} @else if (erreurConcours()) {
+  <app-message-erreur [message]="erreurConcours()!" />
+} @else {
+  <div class="row g-2 mb-4">
+    <div class="col-md-7">
+      <label class="form-label" for="choixConcours">Concours</label>
+      <select
+        id="choixConcours"
+        class="form-select"
+        [value]="concoursSelectionne()?.id ?? ''"
+        (change)="selectionnerConcoursParId($any($event.target).value)"
+      >
+        <option value="" disabled>-- Choisir un concours --</option>
+        @for (c of concoursListe(); track c.id) {
+          <option [value]="c.id">{{ c.titre }}</option>
+        }
+      </select>
+    </div>
+    <div class="col-md-5">
+      <label class="form-label" for="filtreStatut">Statut</label>
+      <select
+        id="filtreStatut"
+        class="form-select"
+        [value]="filtreStatut()"
+        [disabled]="!concoursSelectionne()"
+        (change)="majFiltreStatut($any($event.target).value)"
+      >
+        <option value="">Tous les statuts</option>
+        @for (s of statuts; track s) {
+          <option [value]="s">{{ libelleStatut[s] }}</option>
+        }
+      </select>
+    </div>
+  </div>
+
+  @if (!concoursSelectionne()) {
+    <p class="text-muted">Selectionnez un concours pour voir ses candidatures.</p>
+  } @else if (chargementCandidatures()) {
+    <app-chargement message="Chargement des candidatures..." />
+  } @else if (erreurCandidatures()) {
+    <app-message-erreur
+      [message]="erreurCandidatures()!"
+      [reessayable]="true"
+      (reessayer)="chargerCandidatures()"
+    />
+  } @else if (candidatures().length === 0) {
+    <p class="text-muted text-center py-4">Aucune candidature pour ce filtre.</p>
+  } @else {
+    <div class="table-responsive">
+      <table class="table align-middle">
+        <thead>
+          <tr>
+            <th scope="col">Candidat</th>
+            <th scope="col">Email</th>
+            <th scope="col">Depot</th>
+            <th scope="col">Statut</th>
+            <th scope="col" class="text-end">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (c of candidatures(); track c.id) {
+            <tr>
+              <td class="fw-semibold">{{ c.nomCandidat }} {{ c.prenomCandidat }}</td>
+              <td>{{ c.emailCandidat }}</td>
+              <td>{{ c.dateDepot | date: 'dd/MM/yyyy HH:mm' }}</td>
+              <td><app-badge-statut [statut]="c.statut" /></td>
+              <td class="text-end">
+                <button
+                  type="button"
+                  class="btn btn-sm btn-outline-secondary me-1"
+                  (click)="ouvrirDossier(c)"
+                >
+                  Dossier
+                </button>
+                <button
+                  type="button"
+                  class="btn btn-sm btn-outline-primary me-1"
+                  (click)="ouvrirStatut(c)"
+                >
+                  Statut
+                </button>
+                <button
+                  type="button"
+                  class="btn btn-sm btn-outline-danger"
+                  (click)="demanderSuppression(c)"
+                >
+                  Supprimer
+                </button>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+}
+
+<app-modale
+  [ouverte]="candidatureStatut() !== null"
+  titre="Changer le statut"
+  (fermer)="fermerStatut()"
+>
+  @if (candidatureStatut(); as c) {
+    @if (erreurStatut()) {
+      <div class="alert alert-danger" role="alert">{{ erreurStatut() }}</div>
+    }
+    <p class="small text-muted">
+      {{ c.nomCandidat }} {{ c.prenomCandidat }} - {{ c.titreConcours }}
+    </p>
+    <div class="mb-3">
+      <label class="form-label" for="s-statut">Nouveau statut</label>
+      <select
+        id="s-statut"
+        class="form-select"
+        [value]="nouveauStatut()"
+        (change)="majNouveauStatut($any($event.target).value)"
+      >
+        @for (s of statuts; track s) {
+          <option [value]="s">{{ libelleStatut[s] }}</option>
+        }
+      </select>
+    </div>
+    <div class="d-flex justify-content-end gap-2">
+      <button type="button" class="btn btn-outline-secondary" (click)="fermerStatut()">
+        Annuler
+      </button>
+      <button
+        type="button"
+        class="btn btn-primary"
+        [disabled]="statutEnCours()"
+        (click)="confirmerStatut()"
+      >
+        @if (statutEnCours()) {
+          <span class="spinner-border spinner-border-sm me-1" aria-hidden="true"></span>
+        }
+        Enregistrer
+      </button>
+    </div>
+  }
+</app-modale>
+
+<app-modale
+  [ouverte]="dossierAffiche() !== null"
+  titre="Dossier de candidature"
+  (fermer)="fermerDossier()"
+>
+  @if (dossierAffiche(); as c) {
+    <dl class="row small mb-3">
+      <dt class="col-4">Candidat</dt>
+      <dd class="col-8">{{ c.nomCandidat }} {{ c.prenomCandidat }}</dd>
+      <dt class="col-4">Email</dt>
+      <dd class="col-8">{{ c.emailCandidat }}</dd>
+      <dt class="col-4">Concours</dt>
+      <dd class="col-8">{{ c.titreConcours }}</dd>
+      <dt class="col-4">Depose le</dt>
+      <dd class="col-8">
+        {{ c.dateDepot | date: 'longDate' }} a {{ c.dateDepot | date: 'HH:mm' }}
+      </dd>
+      <dt class="col-4">Statut</dt>
+      <dd class="col-8"><app-badge-statut [statut]="c.statut" /></dd>
+    </dl>
+
+    <h3 class="h6 fw-bold">Lettre de motivation</h3>
+    @if (c.motivation) {
+      <p class="small">{{ c.motivation }}</p>
+    } @else {
+      <p class="small fst-italic text-muted">Aucune.</p>
+    }
+
+    <h3 class="h6 fw-bold mt-3">Notes</h3>
+    @if (chargementNotes()) {
+      <app-chargement message="" />
+    } @else if (notesDossier().length === 0) {
+      <p class="small text-muted">Aucune note saisie.</p>
+    } @else {
+      <table class="table table-sm">
+        <thead>
+          <tr>
+            <th scope="col">Epreuve</th>
+            <th scope="col" class="text-center">Coef.</th>
+            <th scope="col" class="text-center">Note</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (note of notesDossier(); track note.id) {
+            <tr>
+              <td>{{ note.intituleEpreuve }}</td>
+              <td class="text-center">{{ note.coefficient }}</td>
+              <td class="text-center fw-semibold">{{ note.valeur }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    }
+  }
+</app-modale>
+
+<app-boite-confirmation
+  [ouverte]="candidatureASupprimer() !== null"
+  titre="Supprimer la candidature"
+  [message]="
+    'Supprimer la candidature de ' +
+    (candidatureASupprimer()?.nomCandidat ?? '') +
+    ' ' +
+    (candidatureASupprimer()?.prenomCandidat ?? '') +
+    ' ? (impossible si des notes ou un resultat y sont rattaches)'
+  "
+  libelleConfirmation="Supprimer"
+  variante="danger"
+  [enCours]="suppressionEnCours()"
+  (confirme)="confirmerSuppression()"
+  (annule)="annulerSuppression()"
+/>

@@ -1,0 +1,94 @@
+<section class="container py-5">
+  <div
+    class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4"
+  >
+    <div>
+      <h1 class="h3 fw-bold mb-1">Concours ouverts</h1>
+      <p class="text-muted mb-0">Consultez les concours et examens actuellement disponibles.</p>
+    </div>
+    <div class="input-group w-auto">
+      <span class="input-group-text"><i class="bi bi-search" aria-hidden="true"></i></span>
+      <input
+        type="search"
+        class="form-control"
+        placeholder="Rechercher un concours"
+        aria-label="Rechercher un concours"
+        [value]="recherche()"
+        (input)="majRecherche($any($event.target).value)"
+      />
+    </div>
+  </div>
+
+  @if (chargement()) {
+    <app-chargement message="Chargement des concours..." />
+  } @else if (connexionRequise()) {
+    <div class="alert alert-info text-center" role="alert">
+      <p class="mb-2">Connectez-vous pour consulter les concours disponibles.</p>
+      <a class="btn btn-primary" routerLink="/connexion" [queryParams]="{ retour: '/concours' }">
+        Se connecter
+      </a>
+    </div>
+  } @else if (erreur()) {
+    <app-message-erreur [message]="erreur()!" [reessayable]="true" (reessayer)="charger()" />
+  } @else if (concoursAffiches().length === 0) {
+    <div class="text-center text-muted py-5">
+      <i class="bi bi-inbox fs-1 d-block mb-2" aria-hidden="true"></i>
+      @if (concours().length === 0) {
+        Aucun concours ouvert pour le moment.
+      } @else {
+        Aucun concours ne correspond a votre recherche.
+      }
+    </div>
+  } @else {
+    <div class="row g-4">
+      @for (c of concoursAffiches(); track c.id) {
+        <div class="col-md-6 col-lg-4">
+          <div class="card h-100 shadow-sm">
+            <div class="card-body d-flex flex-column">
+              <div class="d-flex gap-2 mb-2 flex-wrap">
+                @if (dateLimiteDepassee(c)) {
+                  <span class="badge text-bg-secondary">Depot cloture</span>
+                } @else {
+                  <span class="badge text-bg-success">Ouvert</span>
+                }
+                @if (c.resultatsPublies) {
+                  <span class="badge text-bg-primary">Resultats publies</span>
+                }
+              </div>
+
+              <h2 class="h5 card-title">{{ c.titre }}</h2>
+              @if (c.description) {
+                <p class="card-text text-muted small flex-grow-1">
+                  {{ c.description | slice: 0 : 140 }}{{ c.description.length > 140 ? '...' : '' }}
+                </p>
+              } @else {
+                <p class="flex-grow-1"></p>
+              }
+
+              <ul class="list-unstyled small text-muted mb-3">
+                <li>
+                  <i class="bi bi-calendar-event me-1" aria-hidden="true"></i>
+                  Date limite : {{ c.dateLimiteCandidature | date: 'longDate' }}
+                </li>
+                @if (c.dateDeliberation) {
+                  <li>
+                    <i class="bi bi-calendar-check me-1" aria-hidden="true"></i>
+                    Deliberation : {{ c.dateDeliberation | date: 'longDate' }}
+                  </li>
+                }
+                <li>
+                  <i class="bi bi-list-check me-1" aria-hidden="true"></i>
+                  {{ c.nombreEpreuves }} epreuve{{ c.nombreEpreuves > 1 ? 's' : '' }}
+                </li>
+              </ul>
+
+              <a class="btn btn-outline-primary mt-auto" [routerLink]="['/concours', c.id]">
+                Voir le detail
+              </a>
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+  }
+</section>

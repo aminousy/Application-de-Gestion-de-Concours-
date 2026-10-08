@@ -1,0 +1,110 @@
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h1 class="h3 fw-bold mb-0">Concours</h1>
+  <a class="btn btn-primary btn-sm" routerLink="/administration/concours/nouveau">
+    <i class="bi bi-plus-lg me-1" aria-hidden="true"></i>Nouveau concours
+  </a>
+</div>
+
+@if (notification()) {
+  <div class="alert alert-info" role="alert">{{ notification() }}</div>
+}
+
+@if (chargement()) {
+  <app-chargement message="Chargement des concours..." />
+} @else if (erreur()) {
+  <app-message-erreur [message]="erreur()!" [reessayable]="true" (reessayer)="charger()" />
+} @else {
+  <input
+    type="search"
+    class="form-control mb-3"
+    placeholder="Rechercher un concours par titre"
+    aria-label="Rechercher un concours"
+    [value]="recherche()"
+    (input)="majRecherche($any($event.target).value)"
+  />
+
+  @if (concoursAffiches().length === 0) {
+    <p class="text-muted text-center py-4">Aucun concours.</p>
+  } @else {
+    <div class="table-responsive">
+      <table class="table align-middle">
+        <thead>
+          <tr>
+            <th scope="col">Titre</th>
+            <th scope="col">Date limite</th>
+            <th scope="col">Deliberation</th>
+            <th scope="col" class="text-center">Places</th>
+            <th scope="col">Etat</th>
+            <th scope="col" class="text-end">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (c of concoursAffiches(); track c.id) {
+            <tr>
+              <td class="fw-semibold">{{ c.titre }}</td>
+              <td>{{ c.dateLimiteCandidature | date: 'dd/MM/yyyy' }}</td>
+              <td>{{ c.dateDeliberation ? (c.dateDeliberation | date: 'dd/MM/yyyy') : '-' }}</td>
+              <td class="text-center">{{ c.nombrePlaces }}</td>
+              <td>
+                <span
+                  class="badge"
+                  [class.text-bg-success]="c.ouvert"
+                  [class.text-bg-secondary]="!c.ouvert"
+                >
+                  {{ c.ouvert ? 'Ouvert' : 'Ferme' }}
+                </span>
+                @if (c.resultatsPublies) {
+                  <span class="badge text-bg-primary ms-1">Resultats publies</span>
+                }
+              </td>
+              <td class="text-end">
+                <button
+                  type="button"
+                  class="btn btn-sm me-1"
+                  [class.btn-outline-success]="!c.ouvert"
+                  [class.btn-outline-secondary]="c.ouvert"
+                  [disabled]="basculeEnCours() === c.id"
+                  (click)="basculerOuverture(c)"
+                >
+                  @if (basculeEnCours() === c.id) {
+                    <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+                  } @else {
+                    {{ c.ouvert ? 'Fermer' : 'Ouvrir' }}
+                  }
+                </button>
+                <a
+                  class="btn btn-sm btn-outline-secondary me-1"
+                  [routerLink]="['/administration/concours', c.id, 'modifier']"
+                >
+                  Modifier
+                </a>
+                <button
+                  type="button"
+                  class="btn btn-sm btn-outline-danger"
+                  (click)="demanderSuppression(c)"
+                >
+                  Supprimer
+                </button>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+}
+
+<app-boite-confirmation
+  [ouverte]="concoursASupprimer() !== null"
+  titre="Supprimer le concours"
+  [message]="
+    'Supprimer definitivement le concours ' +
+    (concoursASupprimer()?.titre ?? '') +
+    ' ? (impossible s\'il a deja des candidatures)'
+  "
+  libelleConfirmation="Supprimer"
+  variante="danger"
+  [enCours]="suppressionEnCours()"
+  (confirme)="confirmerSuppression()"
+  (annule)="annulerSuppression()"
+/>

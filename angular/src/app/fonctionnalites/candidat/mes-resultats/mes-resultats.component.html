@@ -1,0 +1,93 @@
+<section class="container py-5">
+  <h1 class="h3 fw-bold mb-4">Mes resultats</h1>
+
+  @if (chargement()) {
+    <app-chargement message="Chargement de vos resultats..." />
+  } @else if (erreur()) {
+    <app-message-erreur [message]="erreur()!" [reessayable]="true" (reessayer)="charger()" />
+  } @else if (lignes().length === 0) {
+    <div class="text-center text-muted py-5">
+      <i class="bi bi-clipboard-data fs-1 d-block mb-2" aria-hidden="true"></i>
+      <p>Vous n'avez aucune candidature, donc aucun resultat pour le moment.</p>
+      <a class="btn btn-outline-primary" routerLink="/concours">Voir les concours ouverts</a>
+    </div>
+  } @else {
+    <div class="row g-3 mb-4">
+      <div class="col-6 col-md-4">
+        <div class="card text-center shadow-sm">
+          <div class="card-body py-3">
+            <div class="fs-4 fw-bold">{{ resume().total }}</div>
+            <div class="small text-muted">Candidature(s)</div>
+          </div>
+        </div>
+      </div>
+      <div class="col-6 col-md-4">
+        <div class="card text-center shadow-sm">
+          <div class="card-body py-3">
+            <div class="fs-4 fw-bold">{{ resume().publies }}</div>
+            <div class="small text-muted">Resultat(s) publie(s)</div>
+          </div>
+        </div>
+      </div>
+      <div class="col-12 col-md-4">
+        <div class="card text-center shadow-sm">
+          <div class="card-body py-3">
+            <div class="fs-4 fw-bold text-success">{{ resume().admis }}</div>
+            <div class="small text-muted">Admission(s)</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="table-responsive">
+      <table class="table align-middle">
+        <thead>
+          <tr>
+            <th scope="col">Concours</th>
+            <th scope="col">Statut</th>
+            <th scope="col" class="text-center">Moyenne</th>
+            <th scope="col" class="text-center">Rang</th>
+            <th scope="col">Decision</th>
+            <th scope="col" class="text-end">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (ligne of lignes(); track ligne.candidature.id) {
+            <tr>
+              <td class="fw-semibold">{{ ligne.candidature.titreConcours }}</td>
+              <td><app-badge-statut [statut]="ligne.candidature.statut" /></td>
+
+              @if (ligne.publie && ligne.resultat; as r) {
+                <td class="text-center fw-semibold">{{ r.moyenne | number: '1.2-2' }} / 20</td>
+                <td class="text-center">{{ r.rang !== null ? r.rang : '-' }}</td>
+                <td>
+                  @if (r.admis) {
+                    <span class="badge text-bg-success">Admis</span>
+                  } @else {
+                    <span class="badge text-bg-danger">Non admis</span>
+                  }
+                  @if (r.decision) {
+                    <span class="d-block small text-muted">{{ r.decision }}</span>
+                  }
+                </td>
+              } @else {
+                <td colspan="3" class="text-muted fst-italic">
+                  Resultats non encore publies pour ce concours.
+                </td>
+              }
+
+              <td class="text-end">
+                <a
+                  class="btn btn-sm btn-outline-secondary"
+                  [routerLink]="['/candidat/candidature', ligne.candidature.id]"
+                >
+                  Detail
+                </a>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</section>

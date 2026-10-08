@@ -1,0 +1,137 @@
+<h1 class="h3 fw-bold mb-4">Notes</h1>
+
+@if (notification()) {
+  <div class="alert alert-info" role="alert">{{ notification() }}</div>
+}
+
+@if (chargementConcours()) {
+  <app-chargement message="Chargement des concours..." />
+} @else if (erreurConcours()) {
+  <app-message-erreur [message]="erreurConcours()!" />
+} @else {
+  <div class="mb-3" style="max-width: 32rem">
+    <label class="form-label" for="choixConcours">Concours</label>
+    <select
+      id="choixConcours"
+      class="form-select"
+      [value]="concoursSelectionne()?.id ?? ''"
+      (change)="selectionnerConcoursParId($any($event.target).value)"
+    >
+      <option value="" disabled>-- Choisir un concours --</option>
+      @for (c of concoursListe(); track c.id) {
+        <option [value]="c.id">{{ c.titre }}</option>
+      }
+    </select>
+  </div>
+
+  @if (!concoursSelectionne()) {
+    <p class="text-muted">Selectionnez un concours pour saisir les notes.</p>
+  } @else if (chargementDonnees()) {
+    <app-chargement message="Chargement des epreuves et candidatures..." />
+  } @else if (erreurDonnees()) {
+    <app-message-erreur
+      [message]="erreurDonnees()!"
+      [reessayable]="true"
+      (reessayer)="chargerDonnees(concoursSelectionne()!.id)"
+    />
+  } @else {
+    @if (verrouille()) {
+      <div class="alert alert-warning" role="alert">
+        Les resultats de ce concours sont publies : les notes ne sont plus modifiables.
+      </div>
+    }
+
+    @if (epreuves().length === 0) {
+      <p class="text-muted">Ce concours n'a aucune epreuve.</p>
+    } @else if (candidatures().length === 0) {
+      <p class="text-muted">Ce concours n'a aucune candidature.</p>
+    } @else {
+      <div class="mb-3" style="max-width: 32rem">
+        <label class="form-label" for="choixEpreuve">Epreuve</label>
+        <select
+          id="choixEpreuve"
+          class="form-select"
+          [value]="epreuveSelectionneeId()"
+          (change)="selectionnerEpreuve($any($event.target).value)"
+        >
+          <option value="" disabled>-- Choisir une epreuve --</option>
+          @for (e of epreuves(); track e.id) {
+            <option [value]="e.id">{{ e.intitule }} (coef. {{ e.coefficient }})</option>
+          }
+        </select>
+      </div>
+
+      @if (epreuveSelectionnee(); as epreuve) {
+        <p class="text-muted small">
+          {{ nbNotesSaisies() }} / {{ candidatures().length }} note(s) saisie(s) pour cette epreuve.
+        </p>
+
+        <div class="table-responsive">
+          <table class="table align-middle">
+            <thead>
+              <tr>
+                <th scope="col">Candidat</th>
+                <th scope="col" style="width: 10rem">Note / 20</th>
+                <th scope="col" class="text-end">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (c of candidatures(); track c.id) {
+                <tr>
+                  <td class="fw-semibold">
+                    {{ c.nomCandidat }} {{ c.prenomCandidat }}
+                    @if (noteExistante(c.id)) {
+                      <span class="badge text-bg-success ms-1">Saisie</span>
+                    }
+                  </td>
+                  <td>
+                    <input
+                      type="number"
+                      min="0"
+                      max="20"
+                      step="0.25"
+                      class="form-control form-control-sm"
+                      [class.is-invalid]="erreurLigne()[c.id]"
+                      [value]="saisies()[c.id] || ''"
+                      [disabled]="verrouille() || ligneEnCours() !== null"
+                      (input)="majSaisie(c.id, $any($event.target).value)"
+                    />
+                    @if (erreurLigne()[c.id]) {
+                      <div class="invalid-feedback d-block">{{ erreurLigne()[c.id] }}</div>
+                    }
+                  </td>
+                  <td class="text-end">
+                    <button
+                      type="button"
+                      class="btn btn-sm btn-primary me-1"
+                      [disabled]="verrouille() || ligneEnCours() !== null"
+                      (click)="enregistrerLigne(c)"
+                    >
+                      @if (ligneEnCours() === c.id) {
+                        <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+                      } @else {
+                        Enregistrer
+                      }
+                    </button>
+                    @if (noteExistante(c.id)) {
+                      <button
+                        type="button"
+                        class="btn btn-sm btn-outline-danger"
+                        [disabled]="verrouille() || ligneEnCours() !== null"
+                        (click)="supprimerNote(c)"
+                      >
+                        Supprimer
+                      </button>
+                    }
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      } @else {
+        <p class="text-muted">Selectionnez une epreuve.</p>
+      }
+    }
+  }
+}

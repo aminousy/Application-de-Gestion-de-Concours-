@@ -1,0 +1,100 @@
+<section class="container py-5">
+  @if (chargement()) {
+    <app-chargement message="Chargement de votre tableau de bord..." />
+  } @else if (erreur()) {
+    <app-message-erreur [message]="erreur()!" [reessayable]="true" (reessayer)="charger()" />
+  } @else {
+    @if (stats(); as s) {
+    <h1 class="h3 fw-bold mb-1">Bonjour {{ s.prenom }}</h1>
+    <p class="text-muted mb-4">Voici un apercu de vos candidatures et de vos resultats.</p>
+
+    <div class="row g-3 mb-5">
+      <div class="col-6 col-lg">
+        <app-carte-statistique
+          [valeur]="s.totalCandidatures"
+          libelle="Candidatures"
+          icone="bi-folder"
+          couleur="text-primary"
+        />
+      </div>
+      <div class="col-6 col-lg">
+        <app-carte-statistique
+          [valeur]="s.enAttente"
+          libelle="En attente"
+          icone="bi-hourglass-split"
+          couleur="text-secondary"
+        />
+      </div>
+      <div class="col-6 col-lg">
+        <app-carte-statistique
+          [valeur]="s.admises"
+          libelle="Admissions"
+          icone="bi-award"
+          couleur="text-success"
+        />
+      </div>
+      <div class="col-6 col-lg">
+        <app-carte-statistique
+          [valeur]="s.resultatsDisponibles"
+          libelle="Resultats disponibles"
+          icone="bi-clipboard-check"
+          couleur="text-info"
+        />
+      </div>
+      <div class="col-12 col-lg">
+        <app-carte-statistique
+          [valeur]="s.concoursOuverts"
+          libelle="Concours ouverts"
+          icone="bi-megaphone"
+          couleur="text-warning"
+        />
+      </div>
+    </div>
+
+    <h2 class="h5 fw-bold mb-3">Acces rapides</h2>
+    <div class="row g-3">
+      <div class="col-sm-6 col-lg-3">
+        <a class="card text-decoration-none text-body h-100 shadow-sm" routerLink="/concours">
+          <div class="card-body text-center">
+            <i class="bi bi-search fs-2 text-primary d-block mb-2" aria-hidden="true"></i>
+            Voir les concours
+          </div>
+        </a>
+      </div>
+      <div class="col-sm-6 col-lg-3">
+        <a
+          class="card text-decoration-none text-body h-100 shadow-sm"
+          routerLink="/candidat/candidature/nouvelle"
+        >
+          <div class="card-body text-center">
+            <i class="bi bi-plus-circle fs-2 text-primary d-block mb-2" aria-hidden="true"></i>
+            Nouvelle candidature
+          </div>
+        </a>
+      </div>
+      <div class="col-sm-6 col-lg-3">
+        <a
+          class="card text-decoration-none text-body h-100 shadow-sm"
+          routerLink="/candidat/candidatures"
+        >
+          <div class="card-body text-center">
+            <i class="bi bi-folder2 fs-2 text-primary d-block mb-2" aria-hidden="true"></i>
+            Mes candidatures
+          </div>
+        </a>
+      </div>
+      <div class="col-sm-6 col-lg-3">
+        <a
+          class="card text-decoration-none text-body h-100 shadow-sm"
+          routerLink="/candidat/resultats"
+        >
+          <div class="card-body text-center">
+            <i class="bi bi-bar-chart fs-2 text-primary d-block mb-2" aria-hidden="true"></i>
+            Mes resultats
+          </div>
+        </a>
+      </div>
+    </div>
+    }
+  }
+</section>

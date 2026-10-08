@@ -1,0 +1,95 @@
+<section class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-md-10 col-lg-7">
+      @if (succes(); as candidature) {
+        <div class="card border-success shadow-sm">
+          <div class="card-body text-center p-4">
+            <i class="bi bi-check-circle-fill fs-1 text-success" aria-hidden="true"></i>
+            <h1 class="h4 mt-2">Candidature deposee</h1>
+            <p class="text-muted">
+              Votre candidature au concours <strong>{{ candidature.titreConcours }}</strong> a bien
+              ete enregistree. Son statut est actuellement
+              <span class="badge text-bg-secondary">En attente</span>.
+            </p>
+            <div class="d-flex flex-column flex-sm-row gap-2 justify-content-center">
+              <a class="btn btn-primary" routerLink="/candidat/candidatures">
+                Voir mes candidatures
+              </a>
+              <a class="btn btn-outline-primary" routerLink="/concours">Retour aux concours</a>
+            </div>
+          </div>
+        </div>
+      } @else {
+        <div class="card shadow-sm">
+          <div class="card-body p-4">
+            <h1 class="h4 fw-bold mb-1">Deposer une candidature</h1>
+            <p class="text-muted small">
+              Selectionnez un concours et redigez votre motivation. Le depot des pieces
+              justificatives (CV, diplome...) se fera ulterieurement aupres du service concerne.
+            </p>
+
+            @if (chargementConcours()) {
+              <app-chargement message="Chargement des concours ouverts..." />
+            } @else if (erreurChargement()) {
+              <app-message-erreur [message]="erreurChargement()!" />
+            } @else if (concoursOuverts().length === 0) {
+              <div class="alert alert-warning" role="alert">
+                Aucun concours n'est ouvert aux candidatures pour le moment.
+              </div>
+            } @else {
+              @if (erreur()) {
+                <div class="alert alert-danger" role="alert">{{ erreur() }}</div>
+              }
+
+              <form [formGroup]="formulaire" (ngSubmit)="deposer()" novalidate>
+                <div class="mb-3">
+                  <label class="form-label" for="concoursId">Concours</label>
+                  <select
+                    id="concoursId"
+                    class="form-select"
+                    formControlName="concoursId"
+                    [class.is-invalid]="estInvalide('concoursId')"
+                  >
+                    <option [ngValue]="0" disabled>-- Choisir un concours --</option>
+                    @for (c of concoursOuverts(); track c.id) {
+                      <option [ngValue]="c.id">{{ c.titre }}</option>
+                    }
+                  </select>
+                  @if (estInvalide('concoursId')) {
+                    <div class="invalid-feedback">Veuillez selectionner un concours.</div>
+                  }
+                </div>
+
+                <div class="mb-3">
+                  <label class="form-label" for="motivation">
+                    Lettre de motivation <span class="text-muted">(facultatif)</span>
+                  </label>
+                  <textarea
+                    id="motivation"
+                    class="form-control"
+                    rows="6"
+                    formControlName="motivation"
+                    maxlength="2000"
+                    [class.is-invalid]="estInvalide('motivation')"
+                  ></textarea>
+                  <div class="form-text text-end">
+                    {{ formulaire.controls.motivation.value.length }} / 2000
+                  </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary w-100" [disabled]="enCours()">
+                  @if (enCours()) {
+                    <span class="spinner-border spinner-border-sm me-2" aria-hidden="true"></span>
+                    Envoi en cours...
+                  } @else {
+                    Deposer ma candidature
+                  }
+                </button>
+              </form>
+            }
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+</section>
