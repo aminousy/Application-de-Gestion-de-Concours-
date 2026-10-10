@@ -10,18 +10,18 @@ export class ServiceNote {
   private readonly http = inject(HttpClient);
   private readonly url = URL_API.notes;
 
-  /** POST /api/notes (ROLE_ADMIN) : cree ou met a jour la note du couple candidature + epreuve. */
+
   saisir(requete: RequeteNote): Observable<Note> {
     return this.http.post<Note>(this.url, requete);
   }
 
-  /** GET /api/notes?candidatureId={id} (proprietaire ou ROLE_ADMIN). */
+
   listerParCandidature(candidatureId: number): Observable<Note[]> {
     const params = new HttpParams().set('candidatureId', candidatureId);
     return this.http.get<Note[]>(this.url, { params });
   }
 
-  /** DELETE /api/notes/{id} (ROLE_ADMIN, 204). */
+
   supprimer(id: number): Observable<void> {
     return this.http.delete<void>(`${this.url}/${id}`);
   }

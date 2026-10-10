@@ -26,10 +26,7 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-/**
- * Implementation des operations de calcul, de deliberation et de publication
- * des resultats.
- */
+
 @Service
 @Transactional
 public class ServiceResultatImpl implements ServiceResultat {
@@ -152,10 +149,7 @@ public class ServiceResultatImpl implements ServiceResultat {
         return MappeurResultat.versReponse(resultat);
     }
 
-    /**
-     * Calcule la moyenne ponderee d'une candidature apres avoir verifie que
-     * toutes les notes sont saisies, puis cree ou met a jour son resultat.
-     */
+
     private Resultat calculerEtEnregistrer(Candidature candidature) {
         List<Epreuve> epreuves = depotEpreuve.findByConcoursId(candidature.getConcours().getId());
         if (epreuves.isEmpty()) {

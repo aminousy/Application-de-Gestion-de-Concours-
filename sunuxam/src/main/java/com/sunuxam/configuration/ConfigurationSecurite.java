@@ -26,15 +26,7 @@ import java.util.List;
 public class ConfigurationSecurite {
 
     private static final String[] CHEMINS_PUBLICS = {
-            "/api/authentification/**",
-            "/swagger-ui/**",
-            "/swagger-ui.html",
-            "/api-docs/**",
-            "/v3/api-docs/**",
-            "/error"
-    };
-
-    /** Origines du frontend Angular en developpement. A adapter pour la production. */
+            "/api/authentification
     private static final List<String> ORIGINES_FRONTEND = List.of(
             "http://localhost:4200",
             "http://127.0.0.1:4200"

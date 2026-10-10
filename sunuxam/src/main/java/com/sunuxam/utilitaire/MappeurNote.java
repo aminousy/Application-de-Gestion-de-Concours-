@@ -4,9 +4,7 @@ import com.sunuxam.dto.ReponseNote;
 import com.sunuxam.modele.Epreuve;
 import com.sunuxam.modele.Note;
 
-/**
- * Conversion des notes vers leur DTO.
- */
+
 public final class MappeurNote {
 
     private MappeurNote() {

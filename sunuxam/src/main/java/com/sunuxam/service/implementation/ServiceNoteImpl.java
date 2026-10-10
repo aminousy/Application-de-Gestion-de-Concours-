@@ -18,9 +18,7 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-/**
- * Implementation des operations de saisie et de consultation des notes.
- */
+
 @Service
 @Transactional
 public class ServiceNoteImpl implements ServiceNote {

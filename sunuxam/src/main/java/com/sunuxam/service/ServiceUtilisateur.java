@@ -9,12 +9,10 @@ import com.sunuxam.dto.ReponseUtilisateur;
 import com.sunuxam.modele.Role;
 import java.util.List;
 
-/**
- * Operations de gestion des utilisateurs.
- */
+
 public interface ServiceUtilisateur {
 
-    /** Inscrit un nouveau candidat  */
+
     ReponseUtilisateur inscrireCandidat(DemandeInscription demande);
 
 
@@ -30,7 +28,7 @@ public interface ServiceUtilisateur {
 
     void changerMotDePasse(Long id, DemandeChangementMotDePasse demande);
 
-    /** Modifie le role */
+
     ReponseUtilisateur administrer(Long id, DemandeAdministrationUtilisateur demande);
 
     void supprimer(Long id);

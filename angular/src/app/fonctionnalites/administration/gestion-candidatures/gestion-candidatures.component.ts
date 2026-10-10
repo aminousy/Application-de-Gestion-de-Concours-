@@ -53,7 +53,7 @@ export class GestionCandidatures implements OnInit {
   readonly candidatureASupprimer = signal<Candidature | null>(null);
   readonly suppressionEnCours = signal(false);
 
-  /** Incremente a chaque chargement : permet d'ignorer les reponses obsoletes. */
+
   private jetonChargement = 0;
 
   ngOnInit(): void {
@@ -125,7 +125,6 @@ export class GestionCandidatures implements OnInit {
     });
   }
 
-  // --- Statut ---
   ouvrirStatut(candidature: Candidature): void {
     this.nouveauStatut.set(candidature.statut);
     this.erreurStatut.set(null);
@@ -167,7 +166,6 @@ export class GestionCandidatures implements OnInit {
       });
   }
 
-  // --- Dossier ---
   ouvrirDossier(candidature: Candidature): void {
     this.dossierAffiche.set(candidature);
     this.notesDossier.set([]);
@@ -188,7 +186,6 @@ export class GestionCandidatures implements OnInit {
     this.dossierAffiche.set(null);
   }
 
-  // --- Suppression ---
   demanderSuppression(candidature: Candidature): void {
     this.notification.set(null);
     this.candidatureASupprimer.set(candidature);

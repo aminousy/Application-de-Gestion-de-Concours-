@@ -4,11 +4,7 @@ import { catchError, throwError } from 'rxjs';
 
 import { ServiceNotification } from '../services/service-notification';
 
-/**
- * Signale par un toast les erreurs transverses (perte de connexion, erreur
- * serveur). Les autres codes (400/401/403/404/409) restent geres par les
- * composants, au plus pres du contexte. L'erreur est toujours relancee.
- */
+
 export const intercepteurErreurs: HttpInterceptorFn = (requete, suivant) => {
   const notifications = inject(ServiceNotification);
 

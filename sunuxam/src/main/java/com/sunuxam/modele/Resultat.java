@@ -25,7 +25,7 @@ public class Resultat extends ModeleBase {
     @Column(nullable = false)
     private double moyenne;
 
-    /** Rang du candidat  */
+
     @Column
     private Integer rang;
 

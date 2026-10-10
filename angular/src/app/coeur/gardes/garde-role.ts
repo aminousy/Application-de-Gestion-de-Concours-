@@ -4,11 +4,7 @@ import { CanActivateFn, Router, UrlTree } from '@angular/router';
 import { Role } from '../modeles';
 import { ServiceAuthentification } from '../services/service-authentification';
 
-/**
- * Fabrique de garde : n'autorise l'acces qu'aux utilisateurs connectes
- * possedant `roleRequis`. Un utilisateur au mauvais role est renvoye vers
- * l'espace correspondant a son propre role.
- */
+
 export function gardeRole(roleRequis: Role): CanActivateFn {
   return (_route, etat): boolean | UrlTree => {
     const servAuth = inject(ServiceAuthentification);

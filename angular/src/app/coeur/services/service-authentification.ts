@@ -14,10 +14,7 @@ import {
   UtilisateurConnecte
 } from '../modeles';
 
-/**
- * Authentification et gestion de la session (jeton JWT stocke localement,
- * utilisateur connecte, deconnexion, expiration automatique).
- */
+
 @Injectable({ providedIn: 'root' })
 export class ServiceAuthentification {
   private readonly http = inject(HttpClient);
@@ -25,7 +22,7 @@ export class ServiceAuthentification {
 
   private readonly _utilisateurConnecte = signal<UtilisateurConnecte | null>(this.lireSession());
 
-  /** Utilisateur actuellement connecte (email + role) ou null. */
+
   readonly utilisateurConnecte = this._utilisateurConnecte.asReadonly();
   readonly estAuthentifie = computed(() => this._utilisateurConnecte() !== null);
   readonly estAdministrateur = computed(() => this._utilisateurConnecte()?.role === Role.ADMIN);
@@ -64,7 +61,7 @@ export class ServiceAuthentification {
     }
   }
 
-  /** Jeton JWT courant (ou null). Utilise par l'intercepteur HTTP. */
+
   jeton(): string | null {
     return localStorage.getItem(environment.cleStockageJeton);
   }
@@ -73,10 +70,7 @@ export class ServiceAuthentification {
     return this._utilisateurConnecte()?.role ?? null;
   }
 
-  /**
-   * Verifie qu'une session existe et n'est pas expiree (reverification en direct).
-   * Deconnecte silencieusement si le jeton est perime. Utilise par les gardes.
-   */
+
   estSessionActive(): boolean {
     const session = this._utilisateurConnecte();
     if (!session) {

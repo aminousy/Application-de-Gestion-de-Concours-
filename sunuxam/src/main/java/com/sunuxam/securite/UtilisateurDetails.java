@@ -33,7 +33,7 @@ public class UtilisateurDetails implements UserDetails {
         return role;
     }
 
-    /** Indique si l'utilisateur possede le role administrateur. */
+
     public boolean estAdministrateur() {
         return role == Role.ROLE_ADMIN;
     }

@@ -15,9 +15,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-/**
- * Implementation des operations d'inscription et de connexion.
- */
+
 @Service
 public class ServiceAuthentificationImpl implements ServiceAuthentification {
 

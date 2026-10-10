@@ -1,6 +1,4 @@
-/**
- * Enumerations metier, valeurs identiques a celles serialisees par le backend.
- */
+
 
 export enum Role {
   ADMIN = 'ROLE_ADMIN',

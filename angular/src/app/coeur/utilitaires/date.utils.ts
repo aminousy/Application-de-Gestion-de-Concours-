@@ -1,7 +1,4 @@
-/**
- * Vrai si la date fournie (chaine ISO 'AAAA-MM-JJ' ou date-heure) est
- * strictement anterieure au debut de la journee courante.
- */
+
 export function estDatePassee(dateIso: string | null): boolean {
   if (!dateIso) {
     return false;

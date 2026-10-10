@@ -113,7 +113,6 @@ export class GestionUtilisateurs implements OnInit {
     return !!c && c.invalid && (c.dirty || c.touched);
   }
 
-  // --- Creation ---
   ouvrirCreation(): void {
     this.formCreation.reset({
       nom: '',
@@ -166,7 +165,6 @@ export class GestionUtilisateurs implements OnInit {
       });
   }
 
-  // --- Edition ---
   ouvrirEdition(u: Utilisateur): void {
     this.formEdition.reset({
       nom: u.nom,
@@ -240,7 +238,6 @@ export class GestionUtilisateurs implements OnInit {
       });
   }
 
-  // --- Suppression ---
   demanderSuppression(u: Utilisateur): void {
     this.notification.set(null);
     this.utilisateurASupprimer.set(u);

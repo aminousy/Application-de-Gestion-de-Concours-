@@ -20,9 +20,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-/**
- * Implementation des operations de gestion des utilisateurs.
- */
+
 @Service
 @Transactional
 public class ServiceUtilisateurImpl implements ServiceUtilisateur {

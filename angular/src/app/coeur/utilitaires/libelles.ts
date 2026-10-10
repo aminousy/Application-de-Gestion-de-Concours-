@@ -16,7 +16,7 @@ export const CLASSE_BADGE_STATUT_CANDIDATURE: Record<StatutCandidature, string> 
   [StatutCandidature.REFUSE]: 'text-bg-danger'
 };
 
-/** Liste ordonnee des statuts, pratique pour les filtres. */
+
 export const STATUTS_CANDIDATURE: StatutCandidature[] = [
   StatutCandidature.EN_ATTENTE,
   StatutCandidature.DOSSIER_COMPLET,

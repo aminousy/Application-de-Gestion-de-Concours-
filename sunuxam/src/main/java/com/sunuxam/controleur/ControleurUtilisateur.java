@@ -27,9 +27,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-/**
- * Ressource de gestion des comptes utilisateurs.
- */
+
 @RestController
 @RequestMapping("/api/utilisateurs")
 @Tag(name = "Utilisateurs", description = "Gestion des comptes utilisateurs")

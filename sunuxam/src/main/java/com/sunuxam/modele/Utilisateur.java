@@ -27,7 +27,7 @@ public class Utilisateur extends ModeleBase {
     @Column(nullable = false, unique = true)
     private String email;
 
-    /** Mot de passe chiffre  */
+
     @NotBlank
     @Column(name = "mot_de_passe", nullable = false)
     private String motDePasse;
@@ -40,7 +40,7 @@ public class Utilisateur extends ModeleBase {
     @Column(nullable = false, length = 20)
     private Role role;
 
-    /** Un compte desactive ne peut plus s'authentifier. */
+
     @Column(nullable = false)
     private boolean actif = true;
 

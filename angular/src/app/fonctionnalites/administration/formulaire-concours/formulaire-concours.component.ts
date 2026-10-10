@@ -43,7 +43,7 @@ export class FormulaireConcours {
 
   @Input()
   set identifiant(valeur: string | undefined) {
-    // Route /concours/nouveau : aucun identifiant -> mode creation, on ne fait rien.
+
     if (valeur === undefined || valeur === null || valeur === '') {
       return;
     }

@@ -7,11 +7,7 @@ import { ServiceAuthentification } from '../services/service-authentification';
 
 const CHEMIN_AUTHENTIFICATION = `${environment.urlApi}/authentification`;
 
-/**
- * Ajoute le jeton JWT aux requetes vers l'API SunuXam (hors endpoints
- * d'authentification). Une reponse 401 ne declenche la deconnexion que si
- * un jeton avait ete envoye (un visiteur anonyme n'est pas redirige de force).
- */
+
 export const intercepteurJwt: HttpInterceptorFn = (requete, suivant) => {
   const servAuth = inject(ServiceAuthentification);
 

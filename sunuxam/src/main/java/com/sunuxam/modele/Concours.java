@@ -36,11 +36,11 @@ public class Concours extends ModeleBase {
     @Column(name = "nombre_places", nullable = false)
     private int nombrePlaces;
 
-    /** Indique si les candidats peuvent actuellement deposer une candidature. */
+
     @Column(nullable = false)
     private boolean ouvert = false;
 
-    /** Les resultats ne sont visibles des candidats que lorsque ce drapeau est vrai. */
+
     @Column(name = "resultats_publies", nullable = false)
     private boolean resultatsPublies = false;
 
@@ -62,13 +62,13 @@ public class Concours extends ModeleBase {
         this.nombrePlaces = nombrePlaces;
     }
 
-    /** Ajoute une epreuve en maintenant la coherence des deux extremites de la relation. */
+
     public void ajouterEpreuve(Epreuve epreuve) {
         epreuves.add(epreuve);
         epreuve.setConcours(this);
     }
 
-    /** Retire une epreuve en maintenant la coherence des deux extremites de la relation. */
+
     public void retirerEpreuve(Epreuve epreuve) {
         epreuves.remove(epreuve);
         epreuve.setConcours(null);

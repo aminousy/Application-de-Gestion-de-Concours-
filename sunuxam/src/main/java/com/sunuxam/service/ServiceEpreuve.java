@@ -5,9 +5,7 @@ import com.sunuxam.dto.DemandeMiseAJourEpreuve;
 import com.sunuxam.dto.ReponseEpreuve;
 import java.util.List;
 
-/**
- * Operations de gestion des epreuves.
- */
+
 public interface ServiceEpreuve {
 
     ReponseEpreuve creer(DemandeEpreuve demande);

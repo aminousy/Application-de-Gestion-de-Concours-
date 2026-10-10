@@ -10,9 +10,9 @@ public enum StatutCandidature {
 
     EN_ATTENTE_DE_DELIBERATION,
 
-    /** Candidat admis apres deliberation */
+
     ADMIS,
 
-    /** Candidature refusee */
+
     REFUSE
 }

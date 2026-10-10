@@ -16,9 +16,7 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-/**
- * Implementation des operations de gestion des concours.
- */
+
 @Service
 @Transactional
 public class ServiceConcoursImpl implements ServiceConcours {

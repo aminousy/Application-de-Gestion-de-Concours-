@@ -21,9 +21,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-/**
- * Ressource de saisie et de consultation des notes.
- */
+
 @RestController
 @RequestMapping("/api/notes")
 @Tag(name = "Notes", description = "Saisie et consultation des notes")

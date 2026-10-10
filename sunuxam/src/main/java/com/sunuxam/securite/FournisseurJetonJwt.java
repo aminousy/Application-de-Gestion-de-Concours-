@@ -28,7 +28,7 @@ public class FournisseurJetonJwt {
         this.cleSignature = Keys.hmacShaKeyFor(proprietes.cleSecrete().getBytes(StandardCharsets.UTF_8));
     }
 
-    /** Genere un jeton pour l'utilisateur */
+
     public String genererJeton(String email, Role role) {
         Instant maintenant = Instant.now();
         Instant expiration = maintenant.plusMillis(proprietes.dureeValiditeMs());

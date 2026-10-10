@@ -1,10 +1,6 @@
 import { Epreuve } from './epreuve';
 
-/**
- * Backend : ReponseConcours (listes).
- * `dateLimiteCandidature`, `dateDeliberation` : 'AAAA-MM-JJ' (LocalDate).
- * `datePublicationResultats` : ISO 8601 (LocalDateTime) ou null.
- */
+
 export interface Concours {
   id: number;
   titre: string;
@@ -18,7 +14,7 @@ export interface Concours {
   nombreEpreuves: number;
 }
 
-/** Backend : ReponseConcoursDetail (GET /api/concours/{id}). */
+
 export interface ConcoursDetail {
   id: number;
   titre: string;
@@ -32,7 +28,7 @@ export interface ConcoursDetail {
   epreuves: Epreuve[];
 }
 
-/** Backend : DemandeConcours (POST et PUT /api/concours, ROLE_ADMIN). */
+
 export interface RequeteConcours {
   titre: string;
   description?: string;

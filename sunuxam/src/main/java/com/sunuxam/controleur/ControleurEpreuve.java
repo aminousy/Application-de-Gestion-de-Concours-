@@ -21,9 +21,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-/**
- * Ressource de gestion des epreuves.
- */
+
 @RestController
 @RequestMapping("/api/epreuves")
 @Tag(name = "Epreuves", description = "Gestion des epreuves des concours")

@@ -19,7 +19,7 @@ public record ReponseErreur(
     public record ErreurChamp(String champ, String message) {
     }
 
-    /** Construit une reponse d'erreur   */
+
     public static ReponseErreur simple(int statut, String message, String chemin) {
         return new ReponseErreur(statut, message, LocalDateTime.now(), chemin, null);
     }

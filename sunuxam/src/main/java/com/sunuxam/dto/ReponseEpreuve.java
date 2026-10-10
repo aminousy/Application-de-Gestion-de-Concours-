@@ -1,8 +1,6 @@
 package com.sunuxam.dto;
 
-/**
- * Representation d'une epreuve.
- */
+
 public record ReponseEpreuve(
 
         Long id,

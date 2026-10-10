@@ -5,9 +5,7 @@ import com.sunuxam.dto.ReponseConcours;
 import com.sunuxam.dto.ReponseConcoursDetail;
 import java.util.List;
 
-/**
- * Operations de gestion des concours.
- */
+
 public interface ServiceConcours {
 
     ReponseConcours creer(DemandeConcours demande);

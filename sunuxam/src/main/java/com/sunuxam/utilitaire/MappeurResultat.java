@@ -5,9 +5,7 @@ import com.sunuxam.modele.Candidature;
 import com.sunuxam.modele.Resultat;
 import com.sunuxam.modele.Utilisateur;
 
-/**
- * Conversion des resultats vers leur DTO.
- */
+
 public final class MappeurResultat {
 
     private MappeurResultat() {

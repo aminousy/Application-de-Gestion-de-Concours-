@@ -21,9 +21,7 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-/**
- * Implementation des operations de gestion des candidatures.
- */
+
 @Service
 @Transactional
 public class ServiceCandidatureImpl implements ServiceCandidature {

@@ -24,9 +24,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-/**
- * Ressource de gestion des candidatures.
- */
+
 @RestController
 @RequestMapping("/api/candidatures")
 @Tag(name = "Candidatures", description = "Depot et suivi des candidatures")
@@ -78,9 +76,8 @@ public class ControleurCandidature {
         }
     }
 
-    // ------------------------------------------------------------------
-    // Administration (ROLE_ADMIN)
-    // ------------------------------------------------------------------
+
+
 
     @GetMapping
     @PreAuthorize("hasRole('ADMIN')")

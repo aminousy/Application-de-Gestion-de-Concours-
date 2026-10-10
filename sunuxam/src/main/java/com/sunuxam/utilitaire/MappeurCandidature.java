@@ -5,9 +5,7 @@ import com.sunuxam.modele.Candidature;
 import com.sunuxam.modele.Concours;
 import com.sunuxam.modele.Utilisateur;
 
-/**
- * Conversion des candidatures vers leur DTO.
- */
+
 public final class MappeurCandidature {
 
     private MappeurCandidature() {

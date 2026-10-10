@@ -2,9 +2,7 @@ package com.sunuxam.dto;
 
 import java.time.LocalDateTime;
 
-/**
- * Representation du resultat d'une candidature.
- */
+
 public record ReponseResultat(
 
         Long id,

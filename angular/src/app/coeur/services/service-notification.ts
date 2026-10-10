@@ -8,9 +8,7 @@ export interface Notification {
   message: string;
 }
 
-/**
- * File de notifications transitoires (toasts). Auto-fermeture apres 5 secondes.
- */
+
 @Injectable({ providedIn: 'root' })
 export class ServiceNotification {
   private readonly _notifications = signal<Notification[]>([]);

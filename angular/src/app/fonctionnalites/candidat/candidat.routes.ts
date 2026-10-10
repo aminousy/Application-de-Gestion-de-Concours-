@@ -1,8 +1,6 @@
 import { Routes } from '@angular/router';
 
-/**
- * Routes de l'espace candidat (prefixe /candidat, protege par gardeRole(CANDIDAT)).
- */
+
 export const routesCandidat: Routes = [
   { path: '', pathMatch: 'full', redirectTo: 'tableau-de-bord' },
   {

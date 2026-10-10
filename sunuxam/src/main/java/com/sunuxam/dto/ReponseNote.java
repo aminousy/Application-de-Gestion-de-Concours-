@@ -2,9 +2,7 @@ package com.sunuxam.dto;
 
 import java.time.LocalDateTime;
 
-/**
- * Representation d'une note saisie.
- */
+
 public record ReponseNote(
 
         Long id,

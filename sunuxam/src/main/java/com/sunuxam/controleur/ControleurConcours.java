@@ -22,9 +22,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-/**
- * Ressource de gestion des concours.
- */
+
 @RestController
 @RequestMapping("/api/concours")
 @Tag(name = "Concours", description = "Gestion des concours et examens")
@@ -49,9 +47,8 @@ public class ControleurConcours {
         return serviceConcours.obtenirDetail(id);
     }
 
-    // ------------------------------------------------------------------
-    // Administration (ROLE_ADMIN)
-    // ------------------------------------------------------------------
+
+
 
     @GetMapping
     @PreAuthorize("hasRole('ADMIN')")

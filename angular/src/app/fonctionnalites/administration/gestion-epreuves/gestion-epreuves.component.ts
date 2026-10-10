@@ -122,7 +122,6 @@ export class GestionEpreuves implements OnInit {
     return !!c && c.invalid && (c.dirty || c.touched);
   }
 
-  // --- Creation ---
   ouvrirCreation(): void {
     this.formCreation.reset({ intitule: '', description: '', coefficient: 1, dureeMinutes: 60 });
     this.erreurCreation.set(null);
@@ -168,7 +167,6 @@ export class GestionEpreuves implements OnInit {
       });
   }
 
-  // --- Edition ---
   ouvrirEdition(e: Epreuve): void {
     this.formEdition.reset({
       intitule: e.intitule,
@@ -218,7 +216,6 @@ export class GestionEpreuves implements OnInit {
       });
   }
 
-  // --- Suppression ---
   demanderSuppression(e: Epreuve): void {
     this.notification.set(null);
     this.epreuveASupprimer.set(e);

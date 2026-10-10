@@ -12,10 +12,7 @@ const MESSAGES_PAR_STATUT: Record<number, string> = {
   500: 'Une erreur interne est survenue. Reessayez plus tard.'
 };
 
-/**
- * Retourne un message d'erreur affichable a l'utilisateur a partir d'une
- * erreur HTTP. Priorite au `message` du corps `ReponseErreur` du backend.
- */
+
 export function messageErreur(
   erreur: unknown,
   messageParDefaut = 'Une erreur est survenue.'
@@ -30,7 +27,7 @@ export function messageErreur(
   return MESSAGES_PAR_STATUT[erreur.status] ?? messageParDefaut;
 }
 
-/** Extrait le detail par champ d'une reponse de validation (HTTP 400). */
+
 export function erreursChamps(erreur: unknown): ErreurChamp[] {
   if (erreur instanceof HttpErrorResponse) {
     const corps = erreur.error as ReponseErreur | null;

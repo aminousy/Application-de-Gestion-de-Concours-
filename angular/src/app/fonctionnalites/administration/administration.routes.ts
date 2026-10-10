@@ -2,9 +2,7 @@ import { Routes } from '@angular/router';
 
 import { MiseEnPageAdministration } from './mise-en-page-administration/mise-en-page-administration.component';
 
-/**
- * Routes de l'espace administration (prefixe /administration, protege par gardeRole(ADMIN)).
- */
+
 export const routesAdministration: Routes = [
   {
     path: '',
